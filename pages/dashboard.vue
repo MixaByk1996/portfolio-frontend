@@ -1,15 +1,49 @@
 <template>
   <v-app id="inspire">
+
     <v-navigation-drawer v-model="drawer" app>
       <template v-if="companies">
         <v-list>
 <!--          <v-subheader>Компании</v-subheader>-->
 
-            <v-list-group v-for="item in companies" :key="item.id" :value="item.name" >
+            <v-list-group v-for="item in companies" :key="item.id" :value="item.name"  >
+
               <template v-slot:activator>
                 <v-list-item-content>
+
                   <v-list-item-title v-text="item.name"></v-list-item-title>
                 </v-list-item-content>
+                <template v-if="isAdminUser">
+                  <v-list-item-action>
+                    <v-menu
+                      bottom
+                      left
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-btn icon>
+                            <v-icon>mdi-cog-outline</v-icon>
+                          </v-btn>
+                        </v-btn>
+                      </template>
+
+                      <v-list>
+                        <v-list-item
+                          v-for="(item, i) in items"
+                          :key="i"
+                        >
+                          <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+
+                  </v-list-item-action>
+                </template>
+
               </template>
 <!--              <v-subheader>Проекты компани {{item.name}}</v-subheader>-->
               <v-list-group v-for="project in item.projects" :key="project.id" class="pl-10">
@@ -52,17 +86,27 @@ export default {
   },
   data() {
     return {
+      showMainMenu: false,
       drawer: null,
       companies: null,
       token : localStorage.getItem('token'),
-      currentUser: {}
+      currentUser: {},
+      isAdminUser: false,
+      items: [
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' },
+      ],
     }
   },
   methods:{
+
     getUser(){
       this.$axios.get('/user')
         .then((response) =>{
           this.currentUser = response.data;
+          this.isAdminUser = this.currentUser.rules === 'ADMIN';
           console.log(response.data);
         })
         .catch((errors)=>{
@@ -73,6 +117,6 @@ export default {
   created() {
     this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     this.getUser();
-  }
+  },
 }
 </script>
