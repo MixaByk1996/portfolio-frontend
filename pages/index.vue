@@ -7,7 +7,7 @@
             <h3 align="center">Войти в систему</h3>
             <v-text-field  variant="underlined" v-model="login" label="Логин"></v-text-field>
 
-            <v-text-field variant="underlined" v-model="password" type="Пароль" label="Password"></v-text-field>
+            <v-text-field variant="underlined" v-model="password" :type="show_password ? 'text' : 'password' " label="Пароль" :append-icon="show_password ?'mdi-eye':'mdi-eye-off'"  @click:append="show_password=!show_password" ></v-text-field>
 
             <v-btn type="submit" variant="outlined" color="primary" block class="mt-2">Войти</v-btn>
 
@@ -29,6 +29,7 @@ export default {
       is_viewed: false,
       login: '',
       password: '',
+      show_password : false
     };
   },
   beforeMount() {
