@@ -3,7 +3,7 @@
     <v-navigation-drawer v-model="drawer" app>
       <template v-if="companies">
         <v-list>
-          <v-subheader>Компании</v-subheader>
+<!--          <v-subheader>Компании</v-subheader>-->
 
             <v-list-group v-for="item in companies" :key="item.id" :value="item.name" >
               <template v-slot:activator>
@@ -11,7 +11,7 @@
                   <v-list-item-title v-text="item.name"></v-list-item-title>
                 </v-list-item-content>
               </template>
-              <v-subheader>Проекты компани {{item.name}}</v-subheader>
+<!--              <v-subheader>Проекты компани {{item.name}}</v-subheader>-->
               <v-list-group v-for="project in item.projects" :key="project.id" class="pl-10">
                 <template v-slot:activator>
                   <v-list-item-content>
@@ -28,7 +28,7 @@
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-app-bar-title>Имя пользователя</v-app-bar-title>
+      <v-app-bar-title>{{this.currentUser.login}}</v-app-bar-title>
     </v-app-bar>
     <v-footer color="indigo" app></v-footer>
     <v-main>
@@ -53,8 +53,26 @@ export default {
   data() {
     return {
       drawer: null,
-      companies: null
+      companies: null,
+      token : localStorage.getItem('token'),
+      currentUser: {}
     }
-  }//() => ({ drawer: null }),
+  },
+  methods:{
+    getUser(){
+      this.$axios.get('/user')
+        .then((response) =>{
+          this.currentUser = response.data;
+          console.log(response.data);
+        })
+        .catch((errors)=>{
+          console.log(errors)
+        })
+    }
+  },
+  created() {
+    this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+    this.getUser();
+  }
 }
 </script>

@@ -42,21 +42,21 @@ export default {
   },
   methods: {
     async form() {
-      await this.$router.push('/dashboard')
       // await this.$axios.get('/sanctum/csrf-cookie');
-      // var fm = new FormData();
-      // fm.append('login', this.login);
-      // fm.append('password', this.password);
-      // fm.append('device_name', 'browser');
-      // await this.$axios.post('/login', fm)
-      //   .then((response) => {
-      //     console.log(response.data);
-      //
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //     alert('Неверный логин/пароль')
-      //   })
+      var fm = new FormData();
+      fm.append('login', this.login);
+      fm.append('password', this.password);
+      fm.append('device_name', 'browser');
+      await this.$axios.post('/login', fm)
+        .then((response) => {
+          console.log(response.data);
+          localStorage.setItem('token', response.data);
+          this.$router.push('/dashboard')
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('Неверный логин/пароль')
+        })
     },
   },
 
