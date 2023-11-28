@@ -51,7 +51,7 @@
 
                       <v-list>
                         <v-list-item
-                          v-for="(item, i) in items"
+                          v-for="(item, i) in itemsMain"
                           :key="i" link @click="getAlert(item.title)"
                         >
                           <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -108,7 +108,11 @@ const drawer = ref(null)
 export default {
   components: {MenuAdmin},
   beforeMount() {
-
+    if (process.client) {
+      this.token = localStorage.getItem('token');
+    }
+    this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+    this.getUser();
     this.$axios.get('/company')
       .then(response => {
 
@@ -121,14 +125,14 @@ export default {
       showMainMenu: false,
       drawer: null,
       companies: null,
-      token : localStorage.getItem('token'),
+      token : null,
       currentUser: {},
       isAdminUser: false,
       isMenuAdmin:false,
-      items: [
-        { title: 'Click Me' },
-        { title: 'Click Me' },
-        { title: 'Click Me' },
+      itemsMain: [
+        { title: 'Click Me222' },
+        { title: 'Click Me2222' },
+        { title: 'Click Me2' },
         { title: 'Click Me 2' },
       ],
     }
@@ -161,8 +165,7 @@ export default {
     }
   },
   created() {
-    this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-    this.getUser();
+
   },
 }
 </script>
