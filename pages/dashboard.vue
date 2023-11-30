@@ -88,11 +88,12 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
+
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-app-bar-title>{{this.currentUser.login}}</v-app-bar-title>
+      <v-app-bar-title>Приложение</v-app-bar-title>
     </v-app-bar>
-    <v-footer color="indigo" app></v-footer>
+
     <v-main>
       <template v-if="isMenuAdmin">
         <MenuAdmin></MenuAdmin>
@@ -103,7 +104,7 @@
 
 <script>
 import { ref } from 'vue'
-import MenuAdmin from "~/pages/menu-admin.vue";
+import MenuAdmin from "~/components/menu-admin.vue";
 const drawer = ref(null)
 export default {
   components: {MenuAdmin},
