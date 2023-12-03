@@ -31,36 +31,36 @@
 
                   <v-list-item-title v-text="item.name"></v-list-item-title>
                 </v-list-item-content>
-                <template v-if="isAdminUser">
-                  <v-list-item-action>
-                    <v-menu
-                      bottom
-                      left
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-btn icon>
-                            <v-icon>mdi-plus</v-icon>
-                          </v-btn>
-                        </v-btn>
-                      </template>
+<!--                <template v-if="isAdminUser">-->
+<!--                  <v-list-item-action>-->
+<!--                    <v-menu-->
+<!--                      bottom-->
+<!--                      left-->
+<!--                    >-->
+<!--                      <template v-slot:activator="{ on, attrs }">-->
+<!--                        <v-btn-->
+<!--                          icon-->
+<!--                          v-bind="attrs"-->
+<!--                          v-on="on"-->
+<!--                        >-->
+<!--                          <v-btn icon>-->
+<!--                            <v-icon>mdi-plus</v-icon>-->
+<!--                          </v-btn>-->
+<!--                        </v-btn>-->
+<!--                      </template>-->
 
-                      <v-list>
-                        <v-list-item
-                          v-for="(item, i) in itemsMain"
-                          :key="i" link @click="getAlert(item.title)"
-                        >
-                          <v-list-item-title>{{ item.title }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
+<!--                      <v-list>-->
+<!--                        <v-list-item-->
+<!--                          v-for="(item, i) in itemsMain"-->
+<!--                          :key="i" link @click="getAlert(item.title)"-->
+<!--                        >-->
+<!--                          <v-list-item-title>{{ item.title }}</v-list-item-title>-->
+<!--                        </v-list-item>-->
+<!--                      </v-list>-->
+<!--                    </v-menu>-->
 
-                  </v-list-item-action>
-                </template>
+<!--                  </v-list-item-action>-->
+<!--                </template>-->
 
               </template>
 <!--              <v-subheader>Проекты компани {{item.name}}</v-subheader>-->
