@@ -144,71 +144,124 @@
     </v-dialog>
 
     <v-dialog v-model="modalCompanyCreate" max-width="700">
-      <v-card>
-        <v-card-title>
-          Добавить компанию
-        </v-card-title>
-<!--        form_create_company-->
-        <v-text-field
-          v-model="form_create_company.name"
-          label="Наименование"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-text-field
-          v-model="form_create_company.description"
-          label="Описание"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center">
-          <!-- Here the image preview -->
-          <img :src="imageUrl" height="150" v-if="imageUrl"/>
-          <v-text-field label="Выберите фото" @click='pickFile' v-model='imageName' prepend-icon="mdi-file-image"></v-text-field>
-          <input
-            type="file"
-            style="display: none"
-            ref="image"
-            accept="image/jpeg, image/jpg, image/png"
-            @change="onFilePicked"
+      <v-form ref="formCreateCompany" @submit.prevent="createCompany">
+        <v-card>
+          <v-card-title>
+            Добавить компанию
+          </v-card-title>
+          <!--        form_create_company-->
+          <v-text-field
+            v-model="form_create_company.name"
+            label="Наименование"
+            :rules="rules"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-text-field
+            v-model="form_create_company.description"
+            label="Описание"
+            :rules="rules"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center"
+                  :rules="rules"
           >
-        </v-flex>
-        <v-card-actions>
-          <v-btn @click="createCompany">Добавить</v-btn>
-        </v-card-actions>
-      </v-card>
+            <!-- Here the image preview -->
+            <img :src="imageUrl" height="150" v-if="imageUrl"/>
+            <v-text-field label="Выберите фото" @click='pickFile' v-model='imageName' prepend-icon="mdi-file-image"></v-text-field>
+            <input
+              type="file"
+
+              style="display: none"
+              ref="image"
+              accept="image/jpeg, image/jpg, image/png"
+              @change="onFilePicked"
+            >
+          </v-flex>
+          <v-card-actions>
+            <v-btn type="submit">Добавить</v-btn>
+          </v-card-actions>
+        </v-card>
+
+      </v-form>
+
     </v-dialog>
 
+    <v-dialog v-model="modalCreateSubproject" max-width="700">
+      <v-form ref="formSubjectCreate" @submit.prevent="createSubproject">
+        <v-card>
+          <v-card-title>
+            Добавление подпроекта
+          </v-card-title>
+          <v-text-field
+            v-model="form_create_sub_project.name"
+            label="Наименование"
+            single-line
+            :rules="rules"
+            hide-details
+          ></v-text-field>
+          <v-text-field
+            v-model="form_create_sub_project.description"
+            label="Описание"
+            single-line
+            :rules="rules"
+            hide-details
+          ></v-text-field>
+          <v-select
+            v-model="form_create_sub_project.select_project"
+            item-text="name"
+            item-value='id'
+            :rules="rules"
+            :items="this.list_projects_for_select"
+            label="Выберите проект"
+            persistent-hint
+            return-object
+            single-line
+          ></v-select>
+          <v-card-actions>
+            <v-btn type="submit">Добавить</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-dialog>
 
     <v-dialog v-model="modalProjectCreate" max-width="700">
-      <v-card>
-        <v-card-title>
-          Добавление проекта
-        </v-card-title>
-        <v-text-field
-          v-model="form_create_project.name"
-          label="Наименование"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-text-field
-          v-model="form_create_project.description"
-          label="Описание"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-select
-          v-model="form_create_project.select_company"
-          :items="this.list_companies"
-          item-title="name"
-          item-value="id"
-          label="Выберите компанию"
-          persistent-hint
-          return-object
-          single-line
-        ></v-select>
-
-      </v-card>
+      <v-form ref="formCreateProject" @submit.prevent="createProject">
+        <v-card>
+          <v-card-title>
+            Добавление проекта
+          </v-card-title>
+          <v-text-field
+            v-model="form_create_project.name"
+            label="Наименование"
+            single-line
+            :rules="rules"
+            hide-details
+          ></v-text-field>
+          <v-text-field
+            v-model="form_create_project.description"
+            label="Описание"
+            single-line
+            :rules="rules"
+            hide-details
+          ></v-text-field>
+          <v-select
+            v-model="form_create_project.select_company"
+            item-text="name"
+            item-value='id'
+            :rules="rules"
+            :items="this.list_companies_for_select"
+            label="Выберите компанию"
+            persistent-hint
+            return-object
+            single-line
+          ></v-select>
+          <v-card-actions>
+            <v-btn type="submit">Добавить</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
 
 
@@ -240,6 +293,44 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="modalTagsCreate" max-width="700">
+      <v-form ref="formCreateTag" @submit.prevent="sendDataToTagsCreate">
+        <v-card>
+          <v-card-title>
+            Добавить тег/фильтр
+          </v-card-title>
+          <v-switch
+            v-model="model_switch_in_tags"
+            :label="model_switch_in_tags ? 'Подпроекты' : 'Проекты'"
+            @change="getSwitchInTagsChanged"
+          >
+          </v-switch>
+          <v-select
+            v-model="select_in_tags"
+            item-text="name"
+            item-value='id'
+            :rules="rules"
+            :items="this.list_general"
+            :label="model_switch_in_tags ? 'Выберите подпроект' : 'Выберите проект'"
+            persistent-hint
+            return-object
+            single-line
+          ></v-select>
+          <v-text-field
+            v-model="name_tag"
+            :rules="rules"
+            label="Введите название тега/ильтра"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-card-actions>
+            <v-btn type="submit">Добавить</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+
+    </v-dialog>
+
     <v-row>
       <v-col>
           <v-btn width="240" height="100" @click="modalCreateUserForm = !modalCreateUserForm">Создать пользователя</v-btn>
@@ -261,7 +352,7 @@
         <v-btn width="240" height="100" @click="modalBackupList = !modalBackupList">Бекап</v-btn>
       </v-col>
       <v-col>
-        <v-btn width="240"  height="100">Добавить тег/фильтр</v-btn>
+        <v-btn width="240"  height="100" @click="modalTagsCreate = !modalTagsCreate">Добавить тег/фильтр</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -269,6 +360,7 @@
         <v-btn width="240"  height="100" @click="modalCompanyCreate = !modalCompanyCreate">Добавить компанию</v-btn>
       </v-col>
       <v-col>
+          <v-btn width="240"  height="100" @click="modalCreateSubproject = !modalCreateSubproject">Добавить подпроект</v-btn>
 
       </v-col>
     </v-row>
@@ -282,6 +374,9 @@ export default {
     this.getUsers();
     this.getBackups();
     this.getCompany();
+    // this.getProjects();
+    // this.getSubprojects();
+    this.getSwitchInTagsChanged();
   },
   data(){
     return{
@@ -289,25 +384,37 @@ export default {
       modalAccessList : false,
       modalCreateUserForm: false,
       modalBackupList: false,
+      modalCreateSubproject: false,
       ip_text: "",
       search: "",
       searchUser: "",
       access_list_array: null,
       list_users: null,
       list_backup: null,
-
+      rules: [
+        v => !!v || 'Поле обязательно для заполнения!',
+      ],
       imageUrl: '',
       imageFile: null,
       imageName: '',
 
       list_companies: null,
+      list_companies_for_select: null,
+      list_projects_for_select: null,
+      list_subprojects_for_select: null,
+      list_general: null,
+
+      modalTagsCreate: false,
       modalUsersList:false,
       modalUserUpdate: false,
       modalProjectCreate: false,
 
+      model_switch_in_tags: false,
       model_switch_rules: false,
       is_hide_password: false,
       modalCompanyCreate: false,
+      select_in_tags: null,
+      name_tag: "",
       form_create_user:{
         login : "",
         password: "",
@@ -327,7 +434,12 @@ export default {
       form_create_project:{
         name: "",
         description: "",
-        select_company: ""
+        select_company: null
+      },
+      form_create_sub_project:{
+        name: "",
+        description: "",
+        select_project: null
       },
 
       headers: [
@@ -378,10 +490,21 @@ export default {
     }
   },
   methods : {
-
-
     pickFile() {
       this.$refs.image.click()
+    },
+    sendDataToTagsCreate(){
+      if(this.$refs.formCreateTag.validate()){
+        let fm = new FormData();
+        fm.append('id', this.select_in_tags.id);
+        fm.append('name', this.name_tag);
+        fm.append('module', this.model_switch_in_tags ? 'SUBPROJECT' : 'PROJECT');
+        this.$axios.post('/tags', fm)
+          .then((response) =>{
+            alert(response.data.message);
+          })
+        this.modalTagsCreate = false
+      }
     },
     onFilePicked(e) {
       const files = e.target.files
@@ -402,19 +525,78 @@ export default {
         this.imageUrl = ''
       }
     },
-
+    createSubproject(){
+      if(this.$refs.formSubjectCreate.validate()){
+        let fm = new FormData();
+        fm.append('name', this.form_create_sub_project.name );
+        fm.append('description', this.form_create_sub_project.description );
+        fm.append('project_id', this.form_create_sub_project.select_project.id );
+        this.$axios.post('/subprojects', fm)
+          .then((response) =>{
+            alert(response.data.message);
+            this.modalCreateSubproject = false;
+            location.reload()
+          })
+      }
+    },
+    getSwitchInTagsChanged(){
+      this.getProjects();
+      this.getSubprojects();
+      this.list_general = this.model_switch_in_tags ? this.list_subprojects_for_select : this.list_projects_for_select ;
+    },
     createCompany(){
-      let fm = new FormData();
-      fm.append('name', this.form_create_company.name),
-      fm.append('description', this.form_create_company.description),
-      fm.append('image_data', this.imageFile)
-      this.$axios.post('/company', fm)
-        .then((response) => {
-          alert('Успешно добавлена')
-          this.modalCompanyCreate = false
-          location.reload()
+      if (this.$refs.formCreateCompany.validate()){
+        let fm = new FormData();
+        fm.append('name', this.form_create_company.name),
+          fm.append('description', this.form_create_company.description),
+          fm.append('image_data', this.imageFile)
+        this.$axios.post('/company', fm)
+          .then((response) => {
+            alert('Успешно добавлена')
+            this.modalCompanyCreate = false
+            location.reload()
+          })
+      }
+    },
+    getProjects(){
+      this.$axios.get('/projects')
+        .then((response) =>{
+          let temp = response.data.data;
+          this.list_projects_for_select = temp.map((item) =>{
+            return{
+              id : item.id,
+              name: item.name
+            }
+          })
         })
     },
+    getSubprojects(){
+      this.$axios.get('/subprojects')
+        .then((response) =>{
+          let temp = response.data.data;
+          this.list_subprojects_for_select = temp.map((item) =>{
+            return{
+              id : item.id,
+              name: item.name
+            }
+          })
+        })
+    },
+    createProject(){
+      if (this.$refs.formCreateProject.validate()){
+        let fm = new FormData();
+        fm.append('name', this.form_create_project.name );
+        fm.append('description', this.form_create_project.description );
+        fm.append('company_id', this.form_create_project.select_company.id );
+        this.$axios.post('/projects', fm)
+          .then((response) =>{
+            alert(response.data.message);
+            this.modalProjectCreate = false;
+            location.reload()
+          })
+      }
+    },
+
     createBackup(){
       this.is_backup_load = true;
       this.$axios.post('/backup', [])
@@ -438,7 +620,14 @@ export default {
       this.$axios.get('/company')
         .then(response => {
           this.list_companies = response.data.data;
-          console.log(this.list_companies);
+          this.list_companies_for_select = this.list_companies.map((item) =>{
+            return {
+              id: item.id,
+              name: item.name
+            }
+          })
+
+          console.log(this.list_companies_for_select)
         })
     },
     getUserByUpdate(value){
@@ -465,6 +654,7 @@ export default {
           this.form_update_user.login = ''
           this.form_update_user.rules = ''
           this.modalUserUpdate = false
+          this.getUsers()
         })
         .catch(error => {
           alert(error);
