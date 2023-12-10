@@ -167,7 +167,6 @@
           <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center"
                   :rules="rules"
           >
-            <!-- Here the image preview -->
             <img :src="imageUrl" height="150" v-if="imageUrl"/>
             <v-text-field label="Выберите фото" @click='pickFile' v-model='imageName' prepend-icon="mdi-file-image"></v-text-field>
             <input
@@ -208,6 +207,14 @@
             :rules="rules"
             hide-details
           ></v-text-field>
+          <v-file-input
+            v-model="subproject_files"
+            small-chips
+            show-size
+            multiple
+            clearable
+            placeholder="Выберите файлы"
+          ></v-file-input>
           <v-select
             v-model="form_create_sub_project.select_project"
             item-text="name"
@@ -246,6 +253,17 @@
             :rules="rules"
             hide-details
           ></v-text-field>
+
+          <v-file-input
+            v-model="project_files"
+            small-chips
+            show-size
+            multiple
+            clearable
+            @change:="console.log(project_files)"
+            placeholder="Выберите файлы"
+          ></v-file-input>
+
           <v-select
             v-model="form_create_project.select_company"
             item-text="name"
@@ -391,6 +409,8 @@ export default {
       access_list_array: null,
       list_users: null,
       list_backup: null,
+      project_files: null,
+      subproject_files: null,
       rules: [
         v => !!v || 'Поле обязательно для заполнения!',
       ],
@@ -518,6 +538,7 @@ export default {
         fr.addEventListener('load', () => {
           this.imageUrl = fr.result
           this.imageFile = files[0]
+          console.log(this.imageFile)
         })
       } else {
         this.imageName = ''
@@ -531,6 +552,9 @@ export default {
         fm.append('name', this.form_create_sub_project.name );
         fm.append('description', this.form_create_sub_project.description );
         fm.append('project_id', this.form_create_sub_project.select_project.id );
+        for (var i = 0; i < this.subproject_files.length; i++) {
+          fm.append("files_add[]", this.subproject_files[i]);
+        }
         this.$axios.post('/subprojects', fm)
           .then((response) =>{
             alert(response.data.message);
@@ -585,6 +609,9 @@ export default {
     createProject(){
       if (this.$refs.formCreateProject.validate()){
         let fm = new FormData();
+        for (var i = 0; i < this.project_files.length; i++) {
+          fm.append("files_add[]", this.project_files[i]);
+        }
         fm.append('name', this.form_create_project.name );
         fm.append('description', this.form_create_project.description );
         fm.append('company_id', this.form_create_project.select_company.id );

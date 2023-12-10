@@ -1,6 +1,5 @@
 <template>
   <v-app id="inspire">
-
     <v-navigation-drawer v-model="drawer" app>
       <template v-if="projects">
         <v-list>
@@ -10,7 +9,7 @@
             </v-list-item-content>
           <v-divider></v-divider>
           <template v-if="isAdminUser">
-            <v-list-item link @click="isMenuAdmin = !isMenuAdmin; isMenuSearch=false">
+            <v-list-item link @click="isMenuAdmin = !isMenuAdmin; isMenuSearch=false; is_temp_subproject = false; is_temp_project = false;">
               <v-list-item-action>
                 <v-icon >mdi-wrench</v-icon>
               </v-list-item-action>
@@ -23,7 +22,7 @@
             <v-divider></v-divider>
 
           </template>
-          <v-list-item link @click="isMenuSearch = !isMenuSearch; isMenuAdmin = false">
+          <v-list-item link @click="isMenuSearch = !isMenuSearch; isMenuAdmin = false;is_temp_subproject = false; is_temp_project = false;">
             <v-list-item-action>
               <v-icon>
                 mdi-magnify
@@ -36,36 +35,33 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
-            <v-list-group v-for="item in projects" :key="item.id" :value="item.name"  >
+            <v-list-group v-for="item in projects" :key="item.id" :value="item.name">
+                  <template v-slot:activator>
+                    <v-list-item @click="clickProject(item)">
 
-              <template v-slot:activator>
-                <v-icon>
-                  mdi-folder-open
-                </v-icon>
-                <v-list-item-content>
-                  <v-list-item-title  v-text="item.name"></v-list-item-title>
-                </v-list-item-content>
-              </template>
+                      <v-icon>
+                        mdi-folder-open
+                      </v-icon>
+                      <v-list-item-content>
+                        <v-list-item-title  v-text="item.name"></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
 
-              <v-list-group v-for="project in item.subproject" :key="project.id" class="pl-10">
-                <template v-slot:activator>
-                  <v-icon>
-                    mdi-folder-open
-                  </v-icon>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="project.name"></v-list-item-title>
-                  </v-list-item-content>
 
+
+              <v-list-group v-for="project in item.subproject" :key="project.id" :value="project.name" class="pl-10">
+                <template v-slot:activator >
+                  <v-list-item @click="clickSubProject(project.id)">
+                    <v-icon>
+                      mdi-folder-open
+                    </v-icon>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="project.name"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
 
                 </template>
-
-<!--                <v-list-group v-for="object in project.subproject" :key="object.id" class="pl-10">-->
-<!--&lt;!&ndash;                  <template v-slot:activator>&ndash;&gt;-->
-<!--                    <v-list-item-content>-->
-<!--                      <v-list-item-title v-text="object.name"></v-list-item-title>-->
-<!--                    </v-list-item-content>-->
-<!--&lt;!&ndash;                  </template>&ndash;&gt;-->
-<!--                </v-list-group>-->
 
               </v-list-group>
             </v-list-group>
@@ -98,6 +94,12 @@
       <template v-if="isMenuSearch">
         <SearchComponent></SearchComponent>
       </template>
+      <template v-if="is_temp_project">
+        <ProjectComponent v-bind:project="temp_project"></ProjectComponent>
+      </template>
+      <template v-if="is_temp_subproject">
+        <SubprojectComponent v-bind:id="temp_subproject"></SubprojectComponent>
+      </template>
     </v-main>
   </v-app>
 </template>
@@ -106,9 +108,11 @@
 import { ref } from 'vue'
 import MenuAdmin from "~/components/menu-admin.vue";
 import SearchComponent from "~/components/search-component.vue";
+import ProjectComponent from "~/components/project-component.vue";
+import SubprojectComponent from "~/components/subproject-component.vue";
 const drawer = ref(null)
 export default {
-  components: {MenuAdmin,SearchComponent},
+  components: {SubprojectComponent, ProjectComponent, MenuAdmin,SearchComponent},
   beforeMount() {
     if (process.client) {
       this.token = localStorage.getItem('token');
@@ -118,6 +122,7 @@ export default {
     this.$axios.get('/projects')
       .then(response => {
         this.projects = Array.from(response.data.data);
+        console.log(this.projects);
       })
   },
   data() {
@@ -130,6 +135,10 @@ export default {
       isAdminUser: false,
       isMenuAdmin:false,
       isMenuSearch:false,
+      temp_project: null,
+      is_temp_subproject: false,
+      is_temp_project: false,
+      temp_subproject: null,
       itemsMain: [
         { title: 'Click Me222' },
         { title: 'Click Me2222' },
@@ -139,6 +148,21 @@ export default {
     }
   },
   methods:{
+    clickProject(item){
+      this.temp_project = item;
+      console.log(item);
+      this.is_temp_project = true;
+      this.is_temp_subproject = false;
+      this.isMenuAdmin = false;
+      this.isMenuSearch = false;
+    },
+    clickSubProject(id){
+      this.temp_subproject = id;
+      this.is_temp_subproject = true;
+      this.is_temp_project = false;
+      this.isMenuAdmin = false;
+      this.isMenuSearch = false;
+    },
     getUser(){
       this.$axios.get('/user')
         .then((response) =>{
