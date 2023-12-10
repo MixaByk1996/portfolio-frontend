@@ -8,7 +8,10 @@
       v-model="ip_text"
       placeholder="Введите ip адрес"
     ></v-text-field>
-    <v-btn @click="addAcessList">Добавить адрес</v-btn>
+    <template v-if="ip_text.length > 0">
+      <v-btn @click="addAcessList">Добавить адрес</v-btn>
+    </template>
+
   </v-card>
   <v-card>
     <v-card-title>
