@@ -86,7 +86,9 @@ export default {
     getPDF() {
       let fm = new FormData();
       console.log(this.items_projects.length);
-      fm.append('data[]', this.items_projects);
+        fm.append('data', JSON.stringify(this.items_projects));
+
+
       this.$axios.post('/download-pdf', fm, {
         responseType: "blob"
       })
