@@ -12,7 +12,7 @@
             <v-list-item
               v-for="item in project.tags"
               :key="item.id"
-              :value="item.name"
+              :value="item.id"
             >
               <v-list-item-title v-text="item.name"></v-list-item-title>
             </v-list-item>
@@ -30,7 +30,8 @@
             <v-list-item
               v-for="item in project.files"
               :key="item.id"
-              :value="item.name"
+              :value="item.id"
+              @click.prevent="downloadFile(item.file_url, item.name)"
             >
               <v-list-item-title v-text="item.name"></v-list-item-title>
             </v-list-item>
@@ -50,7 +51,8 @@
               :key="item.id"
               :value="item.name"
             >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
+              <v-list-item-title v-text="item.name">
+              </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -59,17 +61,16 @@
         <br> Подпроекты отсувствуют
       </template>
       <br>
-
-
-
       <template v-if="is_admin">
           <v-btn @click="modal_update = true">Начать редактирование</v-btn>
+        <br>
           <v-btn @click="deleteProject">Удалить</v-btn>
-
-
       </template>
     </v-card>
   </template>
+
+
+
     <template v-else>
     <v-card>
       <v-text-field v-model="form.name"
@@ -81,6 +82,26 @@
       >
       </v-text-field>
       <v-btn @click="updateProject">Обновить информацию</v-btn><br>
+
+      <template v-if="this.project.tags.length > 0">
+        <v-list>
+          <v-subheader>Теги</v-subheader>
+          <v-list-item-group v-model="selectedTag">
+            <v-list-item @click="id_tag = item.id"
+              v-for="item in project.tags"
+              :key="item.id"
+              :value="item.id"
+            >
+              <v-list-item-title v-text="item.name"></v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+        <template v-if="selectedTag">
+          <v-btn @click="deleteTag">Удалить тег</v-btn>
+        </template>
+      </template>
+
+
       <template v-if="this.project.files.length > 0">
         <v-list >
           <v-subheader>Файлы</v-subheader>
@@ -136,7 +157,9 @@ export default {
         name: "",
         description: ""
       },
+      baseURL: 'http://192.168.56.56',
       id_file: 0,
+      id_tag: 0,
       project_files: null,
       is_admin: false,
       selectedTag: null,
@@ -146,6 +169,16 @@ export default {
     }
   },
   methods:{
+    downloadFile(url, name){
+      console.log(url);
+      var fullurl = this.baseURL + url;
+          const link = document.createElement('a')
+          link.href = fullurl
+          link.target = '_blank'
+          link.setAttribute('download', name)
+          document.body.appendChild(link)
+          link.click()
+    },
     getUser(){
       this.$axios.get('/user')
         .then((response) =>{
@@ -158,6 +191,13 @@ export default {
     deleteFile(){
       console.log(this.selectedFile)
       this.$axios.delete('/files/' + this.id_file)
+        .then((response) => {
+          alert(response.data.message)
+          location.reload()
+        })
+    },
+    deleteTag(){
+      this.$axios.delete('/tags/' + this.id_tag)
         .then((response) => {
           alert(response.data.message)
           location.reload()
@@ -180,6 +220,7 @@ export default {
       this.$axios.put('/projects/' + this.project.id, this.form)
         .then((response) => {
           alert('Данные обновлены');
+          location.reload();
         })
     },
     deleteProject(){

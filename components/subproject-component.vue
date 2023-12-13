@@ -11,7 +11,7 @@
               <v-list-item
                 v-for="item in current_subproject.tags"
                 :key="item.id"
-                :value="item.name"
+                :value="item.id"
               >
                 <v-list-item-title v-text="item.name"></v-list-item-title>
               </v-list-item>
@@ -41,13 +41,16 @@
         </template>
         <br>
         <template v-if="is_admin">
-          <v-btn>Начать редактирование</v-btn>
+          <v-btn @click="modal_update = true">Начать редактирование</v-btn>
           <v-btn @click="deleteSubProject">Удалить</v-btn>
         </template>
 
 
       </v-card>
     </template>
+
+
+
     <template v-else>
         <v-card>
           <v-text-field v-model="form.name"
@@ -59,6 +62,59 @@
           >
           </v-text-field>
           <v-btn @click="updateProject">Обновить информацию</v-btn>
+
+          <template v-if="current_subproject.tags.length > 0">
+            <v-list>
+              <v-subheader>Теги</v-subheader>
+              <v-list-item-group v-model="selectedTag">
+                <v-list-item @click="id_tag = item.id"
+                  v-for="item in current_subproject.tags"
+                  :key="item.id"
+                  :value="item.id"
+                >
+                  <v-list-item-title v-text="item.name"></v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+            <template v-if="selectedTag">
+              <v-btn @click="deleteTag"></v-btn>
+            </template>
+          </template>
+
+          <template v-if="current_subproject.files.length > 0">
+            <v-list >
+              <v-subheader>Файлы</v-subheader>
+              <v-list-item-group v-model="selectedFile">
+                <v-list-item @click="id_file = item.id"
+                             v-for="item in current_subproject.files"
+                             :key="item.id"
+                             :value="item.id"
+                >
+                  <v-list-item-title v-text="item.name"></v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </template>
+
+          <template v-else>
+            <br> Файлы отсувствуют
+          </template>
+          <p></p>
+          <v-file-input
+            v-model="subprojectFile"
+            small-chips
+            show-size
+            multiple
+            clearable
+            placeholder="Выберите файлы для добавления"
+          ></v-file-input>
+          <v-btn @click="addFilesToProject">Добавить файлы</v-btn><p></p>
+          <template v-if="selectedFile">
+            <v-btn @click="deleteFile">Удалить файл</v-btn>
+          </template>
+
+
+
           <template v-if="is_admin">
             <v-btn @click="modal_update = false">Закончить редактирование</v-btn>
           </template>
@@ -72,9 +128,9 @@
 import {axios} from 'axios';
 export default {
   props: ['id'],
-  // beforeMount() {
-  //   this.getCurrent()
-  // },
+  beforeMount() {
+    this.getCurrent()
+  },
   data() {
     return {
       is_admin: false,
@@ -83,8 +139,13 @@ export default {
         name: "",
         description: ""
       },
+      baseURL: 'http://192.168.56.56',
+      id_file: 0,
+      id_tag: 0,
+      modal_update: false,
       selectedTag: null,
       selectedFile: null,
+      subprojectFile: null,
     }
   },
   methods: {
@@ -97,10 +158,37 @@ export default {
           console.log(errors)
         })
     },
+    deleteFile(){
+      console.log(this.selectedFile)
+      this.$axios.delete('/files/' + this.id_file)
+        .then((response) => {
+          alert(response.data.message)
+          location.reload()
+        })
+    },
+    deleteTag(){
+      this.$axios.delete('/tags/' + this.id_tag)
+        .then((response) => {
+          alert(response.data.message)
+          location.reload()
+        })
+    },
+    addFilesToProject(){
+      let fm = new FormData();
+      for (var i = 0; i < this.project_files.length; i++) {
+        fm.append("files_add[]", this.project_files[i]);
+      }
+      this.$axios.post('/add-files-to-subproject/' + this.project.id, fm)
+        .then((response) =>{
+          alert(response.data.message)
+          this.project_files = null
+          location.reload()
+        })
+
+    },
     getCurrent(){
       this.$axios.get('/subprojects/' + this.id)
         .then((response) => {
-          console.log(response.data.data)
           this.current_subproject = response.data.data;
         })
     },
@@ -108,6 +196,7 @@ export default {
       this.$axios.put('/subprojects/' + this.id, this.form)
         .then((response) => {
           alert('Данные обновлены');
+          location.reload();
         })
     },
     deleteSubProject(){
