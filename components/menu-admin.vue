@@ -70,8 +70,9 @@
 
 
     <v-dialog v-model="modalCreateUserForm" max-width="700">
-      <v-card>
-        <v-card-title>Добавить пользователя</v-card-title>
+      <v-form ref="formCreateUser" @submit.prevent="createUser">
+        <v-card>
+          <v-card-title>Добавить пользователя</v-card-title>
           <v-row>
             <v-col>
               <v-text-field
@@ -99,14 +100,15 @@
                 :label="model_switch_rules ? 'Администратор' : 'Пользователь'"
               ></v-switch>
             </v-col>
-        </v-row>
-        <v-row></v-row>
-        <v-spacer></v-spacer>
-        <v-card-actions>
-          <v-btn @click="createUser()">Добавить</v-btn>
-          <v-btn @click="modalCreateUserForm = false">Выйти</v-btn>
-        </v-card-actions>
-      </v-card>
+          </v-row>
+          <v-row></v-row>
+          <v-spacer></v-spacer>
+          <v-card-actions>
+            <v-btn type="submit">Добавить</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+
     </v-dialog>
 
     <v-dialog v-model="modalUserUpdate" max-width="700">
@@ -467,25 +469,25 @@ export default {
 
       headers: [
         {
-          title: 'IP адрес',
+          text: 'IP адрес',
           align: 'start',
           sortable: true,
           value: 'address',
         },
         {
-          title: "Action",
+          text: "Action",
           value: "delete",
           align: 'end',
           sortable: false,
         },
       ],
       headersBackup: [
-        { title: 'Название файла',
+        { text: 'Название файла',
           align: 'start',
           sortable: false,
           value: 'file_name',
         },
-        { title: 'URL',
+        { text: 'URL',
           align: 'end',
           sortable: false,
           value: 'file_url',
@@ -498,13 +500,13 @@ export default {
       ],
       headersUsersTable: [
         {
-          title: "Логин",
+          text: "Логин",
           align: 'start',
           value: "login",
           sortable: true,
         },
         {
-          title: "Тип",
+          text: "Тип",
           align: 'end',
           value: "rules",
           sortable: false,
@@ -703,14 +705,17 @@ export default {
         })
     },
     createUser(){
-      this.$axios.post('/register', this.form_create_user)
-        .then(response =>{
-          alert('Пользователь успешно добавлен')
-          this.modalCreateUserForm = false
-        })
-        .catch(errors =>{
-          alert(errors);
-        })
+      if(this.$refs.formCreateUser.validate()){
+        this.$axios.post('/register', this.form_create_user)
+          .then(response =>{
+            alert('Пользователь успешно добавлен')
+            this.modalCreateUserForm = false
+          })
+          .catch(errors =>{
+            alert(errors);
+          })
+      }
+
     },
     addAcessList(){
       let fm = new FormData();
