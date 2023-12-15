@@ -4,12 +4,9 @@
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
-        <tiptap-vuetify
-          v-model="current_subproject.description"
-          :extensions="extensions"
-          disabled="disabled"
-        ></tiptap-vuetify>
-        <template v-if="current_subproject.tags.length > 0">
+        <div v-html="current_subproject.description"></div>
+
+        <template v-if="current_subproject.tags !== null">
           <v-list>
             <v-subheader>Теги</v-subheader>
             <v-list-item-group v-model="selectedTag">
@@ -48,7 +45,7 @@
             </template>
           </v-col>
           <v-col>
-            <template v-if="images_file.length > 0">
+            <template v-if="images_file !== null">
               <v-card max-width="700">
                 <v-carousel>
                   <v-carousel-item v-for="item in images_file"
