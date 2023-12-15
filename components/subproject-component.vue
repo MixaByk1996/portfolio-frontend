@@ -3,7 +3,12 @@
     <template v-if="modal_update == false">
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
-        Описание : {{current_subproject.description}} <br>
+        Описание : <br>
+        <tiptap-vuetify
+          v-model="current_subproject.description"
+          :extensions="extensions"
+          disabled="disabled"
+        ></tiptap-vuetify>
         <template v-if="current_subproject.tags.length > 0">
           <v-list>
             <v-subheader>Теги</v-subheader>
@@ -84,10 +89,11 @@
                         label="Наименование"
           >
           </v-text-field>
-          <v-text-field v-model="form.description"
-                        label="Описание подпроекта"
-          >
-          </v-text-field>
+          <p>Описание подпроекта</p>
+          <tiptap-vuetify
+            v-model="form.description"
+            :extensions="extensions"
+          ></tiptap-vuetify>
           <v-btn @click="updateProject">Обновить информацию</v-btn>
 
           <template v-if="current_subproject.tags.length > 0">
@@ -156,8 +162,10 @@
 </template>
 <script>
 import {axios} from 'axios';
+import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify';
 export default {
   props: ['id'],
+  components: { TiptapVuetify },
   beforeMount() {
     this.getCurrent()
     this.getUser()
@@ -165,6 +173,27 @@ export default {
   },
   data() {
     return {
+      extensions: [
+        History,
+        Blockquote,
+        Link,
+        Underline,
+        Strike,
+        Italic,
+        ListItem,
+        BulletList,
+        OrderedList,
+        [Heading, {
+          options: {
+            levels: [1, 2, 3]
+          }
+        }],
+        Bold,
+        Code,
+        HorizontalRule,
+        Paragraph,
+        HardBreak
+      ],
       is_admin: false,
       current_subproject: null,
       form:{
