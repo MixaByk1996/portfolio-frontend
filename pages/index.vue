@@ -37,8 +37,8 @@ export default {
       .then((response) =>{
         this.is_viewed = true
       })
-      .catch((response) => {
-        alert('Ваш IP аресс не внесен в список белых адрессов')
+      .catch((error) => {
+        alert(error)
       })
   },
   methods: {

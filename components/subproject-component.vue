@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container style="margin: 5px 5px 5px 5px">
     <template v-if="modal_update == false">
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
@@ -22,27 +22,54 @@
           <br> Теги отсувствуют
         </template>
 
-        <template v-if="current_subproject.files.length > 0">
-          <v-list >
-            <v-subheader>Файлы</v-subheader>
-            <v-list-item-group v-model="selectedFile">
-              <v-list-item
-                v-for="item in current_subproject.files"
-                :key="item.id"
-                :value="item.name"
-              >
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </template>
-        <template v-else>
-          <br> Файлы отсувствуют
-        </template>
+        <v-row>
+          <v-col>
+            <template v-if="current_subproject.files.length > 0">
+              <v-list >
+                <v-subheader>Файлы</v-subheader>
+                <v-list-item-group v-model="selectedFile">
+                  <v-list-item
+                    v-for="item in current_subproject.files"
+                    :key="item.id"
+                    :value="item.name"
+                  >
+                    <v-list-item-title v-text="item.name"></v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </template>
+            <template v-else>
+              <br> Файлы отсувствуют
+            </template>
+          </v-col>
+          <v-col>
+            <template v-if="images_file.length > 0">
+              <v-card max-width="700">
+                <v-carousel>
+                  <v-carousel-item v-for="item in images_file"
+                                   :key="item.id"
+                                   :src="baseURL + item.file_url"
+                                   cover
+                  >
+
+                  </v-carousel-item>
+                </v-carousel>
+              </v-card>
+
+            </template>
+          </v-col>
+        </v-row>
+
         <br>
         <template v-if="is_admin">
-          <v-btn @click="modal_update = true">Начать редактирование</v-btn>
-          <v-btn @click="deleteSubProject">Удалить</v-btn>
+          <v-row>
+            <v-col>
+              <v-btn @click="modal_update = true">Редактировать</v-btn>
+              <v-btn @click="deleteSubProject">Удалить</v-btn>
+            </v-col>
+
+          </v-row>
+
         </template>
 
 
@@ -108,11 +135,14 @@
             clearable
             placeholder="Выберите файлы для добавления"
           ></v-file-input>
-          <v-btn @click="addFilesToProject">Добавить файлы</v-btn><p></p>
-          <template v-if="selectedFile">
-            <v-btn @click="deleteFile">Удалить файл</v-btn>
-          </template>
-
+          <v-row>
+            <v-col>
+              <v-btn @click="addFilesToProject">Добавить файлы</v-btn>
+              <template v-if="selectedFile">
+                <v-btn @click="deleteFile">Удалить файл</v-btn>
+              </template>
+            </v-col>
+          </v-row>
 
 
           <template v-if="is_admin">
@@ -130,6 +160,8 @@ export default {
   props: ['id'],
   beforeMount() {
     this.getCurrent()
+    this.getUser()
+    this.getImagesFiles()
   },
   data() {
     return {
@@ -139,16 +171,23 @@ export default {
         name: "",
         description: ""
       },
-      baseURL: 'http://192.168.56.56',
+      baseURL: 'https://8657437b.com',
       id_file: 0,
       id_tag: 0,
       modal_update: false,
       selectedTag: null,
+      images_file: null,
       selectedFile: null,
       subprojectFile: null,
     }
   },
   methods: {
+    getImagesFiles(){
+      const image_types = 'png , jpeg, jpg';
+      this.images_file = this.current_subproject.files.filter(obj => {
+        return image_types.includes(obj.type)
+      })
+    },
     getUser(){
       this.$axios.get('/user')
         .then((response) =>{

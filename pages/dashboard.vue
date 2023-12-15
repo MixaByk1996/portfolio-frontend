@@ -9,7 +9,7 @@
             </v-list-item-content>
           <v-divider></v-divider>
           <template v-if="isAdminUser">
-            <v-list-item link @click="isMenuAdmin = !isMenuAdmin; isMenuSearch=false; is_temp_subproject = false; is_temp_project = false;">
+            <v-list-item link @click="isMenuAdmin = true; isMenuSearch=false; is_temp_subproject = false; is_temp_project = false;">
               <v-list-item-action>
                 <v-icon >mdi-wrench</v-icon>
               </v-list-item-action>
@@ -22,7 +22,7 @@
             <v-divider></v-divider>
 
           </template>
-          <v-list-item link @click="isMenuSearch = !isMenuSearch; isMenuAdmin = false;is_temp_subproject = false; is_temp_project = false;">
+          <v-list-item link @click="isMenuSearch = true; isMenuAdmin = false;is_temp_subproject = false; is_temp_project = false;">
             <v-list-item-action>
               <v-icon>
                 mdi-magnify

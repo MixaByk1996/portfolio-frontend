@@ -25,6 +25,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: '~/plugins/TiptapVuetify', mode: 'client' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -48,7 +49,8 @@ export default {
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     withCredentials:true,
-    baseURL: 'http://8657437b.com/api',
+    baseURL: 'https://8657437b.com/api',
+   // baseURL: 'http://8657437b.com/api',
 
   },
 
@@ -73,5 +75,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    transpile: ['vuetify/lib', "tiptap-vuetify"]
   }
 }

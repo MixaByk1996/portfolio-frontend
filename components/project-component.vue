@@ -1,9 +1,15 @@
 <template>
-  <v-container>
+  <v-container style="margin: 5px 5px 5px 5px">
   <template v-if="modal_update == false">
-    <v-card>
+    <v-card >
       Проект: {{project.name}} <br>
-      Описание : {{project.description}} <br>
+      Описание : <br>
+      <tiptap-vuetify
+        v-model="project.description"
+        :extensions="extensions"
+        disabled="disabled"
+      ></tiptap-vuetify>
+      <br>
       Компания: {{project.company.name}}
       <template v-if="this.project.tags.length > 0">
         <v-list>
@@ -22,25 +28,45 @@
       <template v-else>
         <br> Теги отсувствуют
       </template>
+      <v-row>
+        <v-col>
+          <template v-if="this.project.files.length > 0">
+            <v-list >
+              <v-subheader>Файлы</v-subheader>
+              <v-list-item-group v-model="selectedFile">
+                <v-list-item
+                  v-for="item in project.files"
+                  :key="item.id"
+                  :value="item.id"
+                  @click.prevent="downloadFile(item.file_url, item.name)"
+                >
+                  <v-list-item-title v-text="item.name"></v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </template>
+          <template v-else>
+            <br> Файлы отсувствуют
+          </template>
+        </v-col>
+        <v-col>
+          <template v-if="images_file.length > 0">
+            <v-card max-width="700">
+              <v-carousel>
+                <v-carousel-item v-for="item in images_file"
+                                 :key="item.id"
+                                 :src="baseURL + item.file_url"
+                                 cover
+                >
 
-      <template v-if="this.project.files.length > 0">
-        <v-list >
-          <v-subheader>Файлы</v-subheader>
-          <v-list-item-group v-model="selectedFile">
-            <v-list-item
-              v-for="item in project.files"
-              :key="item.id"
-              :value="item.id"
-              @click.prevent="downloadFile(item.file_url, item.name)"
-            >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </template>
-      <template v-else>
-        <br> Файлы отсувствуют
-      </template>
+                </v-carousel-item>
+              </v-carousel>
+            </v-card>
+
+          </template>
+        </v-col>
+      </v-row>
+
 
       <template v-if="this.project.subproject.length > 0">
         <v-list >
@@ -62,9 +88,13 @@
       </template>
       <br>
       <template v-if="is_admin">
-          <v-btn @click="modal_update = true">Начать редактирование</v-btn>
-        <br>
-          <v-btn @click="deleteProject">Удалить</v-btn>
+        <v-row>
+          <v-col>
+            <v-btn @click="modal_update = true">Редактировать</v-btn>
+            <v-btn @click="deleteProject">Удалить проект</v-btn>
+          </v-col>
+
+        </v-row>
       </template>
     </v-card>
   </template>
@@ -77,10 +107,11 @@
         label="Наименование"
       >
       </v-text-field>
-      <v-text-field v-model="form.description"
-                    label="Описание проекта"
-      >
-      </v-text-field>
+      <p>Описание проекта</p>
+      <tiptap-vuetify
+        v-model="form.description"
+        :extensions="extensions"
+      ></tiptap-vuetify>
       <v-btn @click="updateProject">Обновить информацию</v-btn><br>
 
       <template v-if="this.project.tags.length > 0">
@@ -129,12 +160,21 @@
         clearable
         placeholder="Выберите файлы для добавления"
       ></v-file-input>
-      <v-btn @click="addFilesToProject">Добавить файлы</v-btn><p></p>
-      <template v-if="selectedFile">
-        <v-btn @click="deleteFile">Удалить файл</v-btn>
-      </template>
+      <v-row>
+        <v-col>
+          <v-btn @click="addFilesToProject">Добавить файлы</v-btn>
+          <template v-if="selectedFile">
+            <v-btn @click="deleteFile">Удалить файл</v-btn>
+          </template>
+        </v-col>
+      </v-row>
+
       <template v-if="is_admin">
-        <v-btn @click="modal_update = false">Закончить редактирование</v-btn>
+        <v-row>
+          <v-col>
+            <v-btn @click="modal_update = false">Закончить редактирование</v-btn>
+          </v-col>
+        </v-row>
       </template>
     </v-card>
     </template>
@@ -143,24 +183,50 @@
 </template>
 <script>
 import {axios} from 'axios';
+import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
 export default {
   props: ['project'],
+  components: { TiptapVuetify },
   beforeMount() {
     console.log(this.project.files)
     this.form.name = this.project.name
     this.form.description = this.project.description
+    this.getImagesFiles()
     this.getUser()
+    console.log(this.images_file)
   },
   data() {
     return {
+      extensions: [
+        History,
+        Blockquote,
+        Link,
+        Underline,
+        Strike,
+        Italic,
+        ListItem,
+        BulletList,
+        OrderedList,
+        [Heading, {
+          options: {
+            levels: [1, 2, 3]
+          }
+        }],
+        Bold,
+        Code,
+        HorizontalRule,
+        Paragraph,
+        HardBreak
+      ],
       form:{
         name: "",
         description: ""
       },
-      baseURL: 'http://192.168.56.56',
+      baseURL: 'https://8657437b.com',
       id_file: 0,
       id_tag: 0,
       project_files: null,
+      images_file: null,
       is_admin: false,
       selectedTag: null,
       modal_update: false,
@@ -169,6 +235,12 @@ export default {
     }
   },
   methods:{
+    getImagesFiles(){
+      const image_types = 'png , jpeg, jpg';
+      this.images_file = this.project.files.filter(obj => {
+        return image_types.includes(obj.type)
+      })
+    },
     downloadFile(url, name){
       console.log(url);
       var fullurl = this.baseURL + url;

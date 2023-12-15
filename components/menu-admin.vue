@@ -61,9 +61,28 @@
           no-data-text="Данные отсувствуют"
           no-results-text="По запросу ничего не найдено"
         >
-          <!--          <template v-slot:[`item.delete`]="{ item }">-->
-          <!--            <v-btn small color="error" @click="deleteIp(item.id)" > Удалить пользователя </v-btn>-->
-          <!--          </template>-->
+                    <template v-slot:[`item.delete`]="{ item }">
+                      <v-btn small color="error" @click="deleteBackup(item.id)" >Удалить </v-btn>
+                    </template>
+        </v-data-table>
+      </v-card>
+    </v-dialog>
+
+
+    <v-dialog v-model="modalCompaniesList" max-width="700">
+      <v-card >
+        <v-card-title>
+          Список компаний
+        </v-card-title>
+        <v-data-table
+          :items="list_companies"
+          :headers="headersCompanies"
+          no-data-text="Данные отсувствуют"
+          no-results-text="По запросу ничего не найдено"
+        >
+          <template v-slot:[`item.delete`]="{ item }">
+            <v-btn small color="error" @click="deleteCompany (item.id)" >Удалить </v-btn>
+          </template>
         </v-data-table>
       </v-card>
     </v-dialog>
@@ -114,7 +133,7 @@
     <v-dialog v-model="modalUserUpdate" max-width="700">
       <v-card>
         <v-card-title>
-          Обновить данные пользователя
+          Обновить / Удалить данные пользователя
         </v-card-title>
         <v-row>
           <v-col>
@@ -143,6 +162,12 @@
           </v-col>
           <v-col>
             <v-btn @click="updateUser">Обновить</v-btn>
+
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn color="error" @click="deleteUser(form_update_user.id)" > Удалить </v-btn>
           </v-col>
         </v-row>
       </v-card>
@@ -212,14 +237,6 @@
             :rules="rules"
             hide-details
           ></v-text-field>
-          <v-file-input
-            v-model="subproject_files"
-            small-chips
-            show-size
-            multiple
-            clearable
-            placeholder="Выберите файлы"
-          ></v-file-input>
           <v-select
             v-model="form_create_sub_project.select_project"
             item-text="name"
@@ -258,17 +275,6 @@
             :rules="rules"
             hide-details
           ></v-text-field>
-
-          <v-file-input
-            v-model="project_files"
-            small-chips
-            show-size
-            multiple
-            clearable
-            @change:="console.log(project_files)"
-            placeholder="Выберите файлы"
-          ></v-file-input>
-
           <v-select
             v-model="form_create_project.select_company"
             item-text="name"
@@ -309,9 +315,6 @@
           no-data-text="Данные отсувствуют"
           no-results-text="По запросу ничего не найдено"
         >
-<!--          <template v-slot:[`item.delete`]="{ item }">-->
-<!--            <v-btn small color="error" @click="deleteIp(item.id)" > Удалить пользователя </v-btn>-->
-<!--          </template>-->
         </v-data-table>
       </v-card>
     </v-dialog>
@@ -387,6 +390,14 @@
 
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-btn width="240"  height="100" @click="modalCompaniesList = !modalCompaniesList">Список компаний</v-btn>
+      </v-col>
+      <v-col>
+
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -407,6 +418,7 @@ export default {
       modalAccessList : false,
       modalCreateUserForm: false,
       modalBackupList: false,
+      modalCompaniesList:false,
       modalCreateSubproject: false,
       ip_text: "",
       search: "",
@@ -491,12 +503,26 @@ export default {
           align: 'end',
           sortable: false,
           value: 'file_url',
-        }
-        // {
-        //   text: "",
-        //   value: "delete",
-        //   sortable: false,
-        // },
+        },
+        {
+          text: "Action",
+          value: "delete",
+          align: 'end',
+          sortable: false,
+        },
+      ],
+      headersCompanies: [
+        { text: 'Название',
+          align: 'start',
+          sortable: false,
+          value: 'name',
+        },
+        {
+          text: "Action",
+          value: "delete",
+          align: 'end',
+          sortable: false,
+        },
       ],
       headersUsersTable: [
         {
@@ -510,7 +536,7 @@ export default {
           align: 'end',
           value: "rules",
           sortable: false,
-        }
+        },
       ]
     }
   },
@@ -557,9 +583,6 @@ export default {
         fm.append('name', this.form_create_sub_project.name );
         fm.append('description', this.form_create_sub_project.description );
         fm.append('project_id', this.form_create_sub_project.select_project.id );
-        for (var i = 0; i < this.subproject_files.length; i++) {
-          fm.append("files_add[]", this.subproject_files[i]);
-        }
         this.$axios.post('/subprojects', fm)
           .then((response) =>{
             alert(response.data.message);
@@ -614,9 +637,6 @@ export default {
     createProject(){
       if (this.$refs.formCreateProject.validate()){
         let fm = new FormData();
-        for (var i = 0; i < this.project_files.length; i++) {
-          fm.append("files_add[]", this.project_files[i]);
-        }
         fm.append('name', this.form_create_project.name );
         fm.append('description', this.form_create_project.description );
         fm.append('company_id', this.form_create_project.select_company.id );
@@ -655,7 +675,8 @@ export default {
           this.list_companies_for_select = this.list_companies.map((item) =>{
             return {
               id: item.id,
-              name: item.name
+              name: item.name,
+              description: item.description,
             }
           })
 
@@ -734,6 +755,32 @@ export default {
           this.getIPs()
         })
     },
+
+    deleteUser(id){
+      this.$axios.get('user/delete/' + id)
+        .then(response =>{
+          alert('Удален успешно');
+          this.modalUserUpdate = false;
+          this.getUsers();
+        })
+    },
+    deleteBackup(id){
+      this.$axios.get('backup/delete/' + id)
+        .then(response =>{
+          alert('Удален успешно');
+          this.modalUserUpdate = false;
+          this.getBackups();
+        })
+    },
+
+    deleteCompany(id){
+      this.$axios.delete('company/' + id)
+        .then(response =>{
+          alert('Удалена успешно');
+          this.getCompany();
+        })
+    },
+
     getModalAccessList(){
       this.modalAccessList = !this.modalAccessList;
     }
