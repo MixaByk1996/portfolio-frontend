@@ -4,11 +4,12 @@
     <v-card >
       Проект: {{project.name}} <br>
       Описание : <br>
-      <tiptap-vuetify
-        v-model="project.description"
-        :extensions="extensions"
-        disabled="disabled"
-      ></tiptap-vuetify>
+      <div v-html="project.description"></div>
+<!--      <tiptap-vuetify-->
+<!--        v-model="project.description"-->
+<!--        :extensions="extensions"-->
+<!--        disabled="disabled"-->
+<!--      ></tiptap-vuetify>-->
       <br>
       Компания: {{project.company.name}}
       <template v-if="this.project.tags.length > 0">

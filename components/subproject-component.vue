@@ -1,6 +1,6 @@
 <template>
   <v-container style="margin: 5px 5px 5px 5px">
-    <template v-if="modal_update == false">
+    <template v-if="modal_update === false">
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
@@ -29,7 +29,7 @@
 
         <v-row>
           <v-col>
-            <template v-if="current_subproject.files.length > 0">
+            <template v-if="current_subproject.files !== null">
               <v-list >
                 <v-subheader>Файлы</v-subheader>
                 <v-list-item-group v-model="selectedFile">
@@ -96,7 +96,7 @@
           ></tiptap-vuetify>
           <v-btn @click="updateProject">Обновить информацию</v-btn>
 
-          <template v-if="current_subproject.tags.length > 0">
+          <template v-if="current_subproject.tags !== null">
             <v-list>
               <v-subheader>Теги</v-subheader>
               <v-list-item-group v-model="selectedTag">
@@ -114,7 +114,7 @@
             </template>
           </template>
 
-          <template v-if="current_subproject.files.length > 0">
+          <template v-if="current_subproject.files !== null">
             <v-list >
               <v-subheader>Файлы</v-subheader>
               <v-list-item-group v-model="selectedFile">

@@ -744,7 +744,6 @@ export default {
       this.$axios.post('/access-list', fm)
         .then(response =>{
           alert(response.data.message)
-          this.ip_text = ''
           this.getIPs()
         })
     },
