@@ -58,10 +58,6 @@ export default {
         { text: 'Компания',
           sortable: false,
           value: 'company.name',
-        },
-        { text: 'Описание',
-          sortable: false,
-          value: 'description',
         }
         // {
         //   text: "",

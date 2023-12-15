@@ -210,9 +210,21 @@ export default {
   methods: {
     getImagesFiles(){
       const image_types = 'png , jpeg, jpg';
-      this.images_file = this.current_subproject.files.filter(obj => {
-        return image_types.includes(obj.type)
-      })
+      if(this.current_subproject !== null){
+        if(this.current_subproject.files !== null){
+          this.images_file = this.current_subproject.files.filter(obj => {
+            return image_types.includes(obj.type)
+          })
+        }
+        else{
+          this.images_file = null;
+        }
+      }
+      else{
+        this.images_file = null;
+      }
+
+
     },
     getUser(){
       this.$axios.get('/user')
@@ -240,10 +252,10 @@ export default {
     },
     addFilesToProject(){
       let fm = new FormData();
-      for (var i = 0; i < this.project_files.length; i++) {
-        fm.append("files_add[]", this.project_files[i]);
+      for (var i = 0; i < this.subprojectFile.length; i++) {
+        fm.append("files_add[]", this.subprojectFile[i]);
       }
-      this.$axios.post('/add-files-to-subproject/' + this.project.id, fm)
+      this.$axios.post('/add-files-to-subproject/' + this.current_subproject.id, fm)
         .then((response) =>{
           alert(response.data.message)
           this.project_files = null
