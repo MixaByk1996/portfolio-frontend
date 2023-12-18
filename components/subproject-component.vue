@@ -82,12 +82,12 @@
 
 <!--    <template v-else>-->
         <v-card>
-          <v-text-field v-model="form.name"
+          <v-text-field v-model="current_subproject.name"
                         label="Наименование"
           >
           </v-text-field>
           <p>Описание листа</p>
-          <vue-editor v-model="form.description"></vue-editor>
+          <vue-editor v-model="current_subproject.description"></vue-editor>
 <!--          <tiptap-vuetify-->
 <!--            v-model="form.description"-->
 <!--            :extensions="extensions"-->
