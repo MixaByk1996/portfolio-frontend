@@ -318,6 +318,7 @@ export default {
     getCurrent(){
       this.$axios.get('/subprojects/' + this.id)
         .then((response) => {
+          console.log(this.id);
           this.current_subproject = response.data.data;
         })
     },
@@ -337,6 +338,9 @@ export default {
     }
   },
   mounted (){
+    this.getCurrent();
+  },
+  computed(){
     this.getCurrent();
   }
 }

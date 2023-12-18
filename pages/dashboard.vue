@@ -35,7 +35,7 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
-            <v-list-group v-for="item in projects" :key="item.id" :value="item.name">
+            <v-list-group v-for="item in projects" :key="item.id" :value="item.id">
                   <template v-slot:activator>
                     <v-list-item @click="clickProject(item)">
                       <v-icon>
