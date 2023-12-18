@@ -218,6 +218,7 @@ export default {
           this.$router.push('/');
         })
         .catch(errors => {
+          this.$router.push('/');
           console.log(errors.response.data);
         })
     },
