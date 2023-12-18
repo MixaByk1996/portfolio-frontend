@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app ref="app">
     <v-card v-show="is_viewed" >
       <div class="d-flex align-center justify-center" style="height: 100vh">
         <v-sheet width="400" class="mx-auto">

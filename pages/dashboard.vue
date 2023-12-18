@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app ref="app1" id="inspire">
     <v-navigation-drawer v-model="drawer" app>
       <template v-if="projects">
         <v-list>
@@ -35,7 +35,7 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
-            <v-list-group v-for="item in projects" :key="item.id" :value="item.id">
+            <v-list-group  :value="false" v-for="item in projects" :key="item.id">
                   <template v-slot:activator>
                     <v-list-item @click="clickProject(item)">
                       <v-icon>
@@ -160,6 +160,7 @@ export default {
       is_temp_subproject: false,
       is_temp_project: false,
       temp_subproject: null,
+      opened: false,
       baseURL: 'https://8657437b.com',
       itemsMain: [
         { title: 'Click Me222' },

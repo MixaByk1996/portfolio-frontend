@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin: 5px 5px 5px 5px">
+  <v-container ref="cont"  style="margin: 5px 5px 5px 5px">
 <!--  <template v-if="modal_update == false">-->
 <!--    <v-card >-->
 <!--      Проект: {{project.name}} <br>-->
@@ -103,13 +103,16 @@
 
 
 <!--    <template v-else>-->
-    <v-card>
+    <v-card >
       <v-text-field v-model="form.name"
         label="Наименование"
       >
       </v-text-field>
       <p>Описание проекта</p>
-        <vue-editor v-model="form.description"></vue-editor>
+      <div @keyup="setFocus">
+        <vue-editor v-scroll:#scroll-target="onScroll" :editor-options="editorSettings" ref="editor" v-model="form.description" ></vue-editor>
+      </div>
+
 
 <!--      <VueEditor v-model="form.description"></VueEditor>-->
 <!--      <tiptap-vuetify-->
@@ -235,11 +238,16 @@
 </template>
 <script>
 import {axios} from 'axios';
-import { VueEditor } from "vue2-editor";
+import { VueEditor, Quill } from "vue2-editor";
 import { TiptapVuetify, Heading, CodeBlock,Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
+import ImageResize from 'quill-image-resize-vue';
+import { ImageDrop } from 'quill-image-drop-module';
+
+Quill.register("modules/imageDrop", ImageDrop);
+Quill.register("modules/imageResize", ImageResize);
 export default {
   props: ['project'],
-  components: { TiptapVuetify ,VueEditor},
+  components: { TiptapVuetify ,VueEditor },
   beforeMount() {
     console.log(this.project.files)
     this.form.name = this.project.name
@@ -250,6 +258,13 @@ export default {
   },
   data() {
     return {
+      editorSettings: {
+        modules: {
+          imageDrop: true,
+          imageResize: {},
+        }
+      },
+      quill: null,
       extensions: [
         History,
         Blockquote,
@@ -289,9 +304,20 @@ export default {
       modal_update: false,
       selectedFile: null,
       selectedSubproject: null,
+      offsetTop: 0,
     }
   },
   methods:{
+    setFocus(e){
+      if(e.keyCode === 86 && e.ctrlKey){
+        this.$refs.cont.ofefsetTop = this.offsetTop;
+      }
+
+    },
+    onScroll (e) {
+      console.log(e);
+      this.offsetTop = e.target.scrollTop
+    },
     getImagesFiles(){
       const image_types = 'png , jpeg, jpg';
       this.images_file = this.project.files.filter(obj => {

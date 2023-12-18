@@ -218,7 +218,7 @@
     </v-dialog>
 
     <v-dialog v-model="modalCreateSubproject" max-width="700">
-      <v-form ref="formSubjectCreate" @submit.prevent="createSubproject">
+      <v-form ref="formSubjectCreate" v-scroll:#scroll-target="onScroll" @submit.prevent="createSubproject">
         <v-card>
           <v-card-title>
             Добавление листа
@@ -243,7 +243,7 @@
           ></v-select>
 
           <p>Описание листа</p>
-          <vue-editor v-model="form_create_sub_project.description"></vue-editor>
+          <vue-editor  @keyup="setPosition"  :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
 <!--          <v-text-field-->
 <!--            v-model="form_create_sub_project.description"-->
 <!--            label="Описание"-->
@@ -405,7 +405,12 @@
 </template>
 <script>
 import {axios} from 'axios';
-import { VueEditor } from "vue2-editor";
+import { VueEditor, Quill } from "vue2-editor";
+import ImageResize from 'quill-image-resize-vue';
+import { ImageDrop } from 'quill-image-drop-module';
+
+Quill.register("modules/imageDrop", ImageDrop);
+Quill.register("modules/imageResize", ImageResize);
 export default {
   components:{VueEditor},
   beforeMount() {
@@ -419,7 +424,14 @@ export default {
   },
   data(){
     return{
+      editorSettings: {
+        modules: {
+          imageDrop: true,
+          imageResize: {},
+        }
+      },
       is_backup_load : false,
+      offsetTop: 0,
       modalAccessList : false,
       modalCreateUserForm: false,
       modalBackupList: false,
@@ -546,6 +558,15 @@ export default {
     }
   },
   methods : {
+    onScroll (e) {
+      this.offsetTop = e.target.scrollTop
+    },
+    setPosition(e){
+      if(e.keyCode === 86 && e.ctrlKey){
+        console.log(this.offsetTop)
+        this.$refs.formSubjectCreate.target.offsetTop = this.offsetTop
+      }
+    },
     pickFile() {
       this.$refs.image.click()
     },

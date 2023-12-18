@@ -87,7 +87,7 @@
           >
           </v-text-field>
           <p>Описание листа</p>
-          <vue-editor v-model="current_subproject.description"></vue-editor>
+          <vue-editor :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
 <!--          <tiptap-vuetify-->
 <!--            v-model="form.description"-->
 <!--            :extensions="extensions"-->
@@ -209,8 +209,12 @@
 </template>
 <script>
 import {axios} from 'axios';
-import { VueEditor } from "vue2-editor";
+import {Quill, VueEditor} from "vue2-editor";
 import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify';
+import {ImageDrop} from "quill-image-drop-module";
+import ImageResize from "quill-image-resize-vue";
+Quill.register("modules/imageDrop", ImageDrop);
+Quill.register("modules/imageResize", ImageResize);
 export default {
   props: ['id'],
   components: { TiptapVuetify ,VueEditor },
@@ -251,6 +255,12 @@ export default {
       baseURL: 'https://8657437b.com',
       id_file: 0,
       id_tag: 0,
+      editorSettings: {
+        modules: {
+          imageDrop: true,
+          imageResize: {},
+        }
+      },
       confirm_dialog: false,
       modal_update: false,
       selectedTag: null,
