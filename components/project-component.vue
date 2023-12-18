@@ -1,5 +1,126 @@
 <template>
   <v-container ref="cont"  style="margin: 5px 5px 5px 5px">
+    <template v-if="is_admin">
+      <v-btn @click="modal_update = !modal_update">{{modal_update === true  ? 'Список листов' : 'Редактировать проект' }}</v-btn>
+    </template>
+    <template v-if="modal_update === true">
+      <v-card >
+        <v-text-field v-model="form.name"
+                      label="Наименование"
+        >
+        </v-text-field>
+        <p>Описание проекта</p>
+        <div @keyup="setFocus">
+          <vue-editor v-scroll:#scroll-target="onScroll" :editor-options="editorSettings" ref="editor" v-model="form.description" ></vue-editor>
+        </div>
+
+
+        <!--      <VueEditor v-model="form.description"></VueEditor>-->
+        <!--      <tiptap-vuetify-->
+        <!--        v-model="form.description"-->
+        <!--        :extensions="extensions"-->
+        <!--      ></tiptap-vuetify>-->
+        <!--      <v-btn @click="updateProject">Обновить информацию</v-btn><br>-->
+
+        <template v-if="this.project.tags.length > 0">
+          <v-list>
+            <v-subheader>Теги</v-subheader>
+            <v-list-item-group v-model="selectedTag">
+              <v-list-item @click="id_tag = item.id"
+                           v-for="item in project.tags"
+                           :key="item.id"
+                           :value="item.id"
+              >
+                <v-list-item-title v-text="item.name"></v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+          <template v-if="selectedTag">
+            <v-btn @click="deleteTag">Удалить тег</v-btn>
+          </template>
+        </template>
+
+
+        <template v-if="this.project.files.length > 0">
+          <v-list >
+            <v-subheader>Файлы</v-subheader>
+            <v-list-item-group v-model="selectedFile">
+              <v-list-item @click="id_file = item.id"
+                           v-for="item in project.files"
+                           :key="item.id"
+                           :value="item.id"
+              >
+                <v-list-item-title v-text="item.name"></v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </template>
+
+        <template v-else>
+          <br> Файлы отсувствуют
+        </template>
+        <p></p>
+        <v-file-input
+          v-model="project_files"
+          small-chips
+          show-size
+          multiple
+          clearable
+          placeholder="Выберите файлы для добавления"
+        ></v-file-input>
+        <v-row>
+          <v-col>
+            <v-btn @click="addFilesToProject">Добавить файлы</v-btn>
+            <template v-if="selectedFile">
+              <v-btn @click="deleteFile">Удалить файл</v-btn>
+            </template>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+
+          </v-col>
+        </v-row> <v-row>
+        <v-col>
+
+        </v-col>
+      </v-row>
+
+
+        <template v-if="is_admin">
+          <v-row>
+            <v-col>
+              <v-btn @click="confirm_dialog = true">Закончить редактирование</v-btn>
+            </v-col>
+            <v-col align="center">
+              <v-btn @click="deleteProject">Удалить проект</v-btn>
+            </v-col>
+            <v-col>
+
+            </v-col>
+          </v-row>
+        </template>
+      </v-card>
+    </template>
+    <template v-else>
+      <v-card>
+        <v-card-title>
+          Список листов
+        </v-card-title>
+        <v-list>
+          <v-list-item-group>
+            <v-list-item
+                         v-for="item in project.subproject"
+                         :key="item.id"
+                         :value="item.id"
+            >
+              <v-list-item-title v-text="item.name"></v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-card>
+    </template>
+
 <!--  <template v-if="modal_update == false">-->
 <!--    <v-card >-->
 <!--      Проект: {{project.name}} <br>-->
@@ -103,103 +224,7 @@
 
 
 <!--    <template v-else>-->
-    <v-card >
-      <v-text-field v-model="form.name"
-        label="Наименование"
-      >
-      </v-text-field>
-      <p>Описание проекта</p>
-      <div @keyup="setFocus">
-        <vue-editor v-scroll:#scroll-target="onScroll" :editor-options="editorSettings" ref="editor" v-model="form.description" ></vue-editor>
-      </div>
 
-
-<!--      <VueEditor v-model="form.description"></VueEditor>-->
-<!--      <tiptap-vuetify-->
-<!--        v-model="form.description"-->
-<!--        :extensions="extensions"-->
-<!--      ></tiptap-vuetify>-->
-<!--      <v-btn @click="updateProject">Обновить информацию</v-btn><br>-->
-
-      <template v-if="this.project.tags.length > 0">
-        <v-list>
-          <v-subheader>Теги</v-subheader>
-          <v-list-item-group v-model="selectedTag">
-            <v-list-item @click="id_tag = item.id"
-              v-for="item in project.tags"
-              :key="item.id"
-              :value="item.id"
-            >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-        <template v-if="selectedTag">
-          <v-btn @click="deleteTag">Удалить тег</v-btn>
-        </template>
-      </template>
-
-
-      <template v-if="this.project.files.length > 0">
-        <v-list >
-          <v-subheader>Файлы</v-subheader>
-          <v-list-item-group v-model="selectedFile">
-            <v-list-item @click="id_file = item.id"
-              v-for="item in project.files"
-              :key="item.id"
-              :value="item.id"
-            >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </template>
-
-      <template v-else>
-        <br> Файлы отсувствуют
-      </template>
-      <p></p>
-      <v-file-input
-        v-model="project_files"
-        small-chips
-        show-size
-        multiple
-        clearable
-        placeholder="Выберите файлы для добавления"
-      ></v-file-input>
-      <v-row>
-        <v-col>
-          <v-btn @click="addFilesToProject">Добавить файлы</v-btn>
-          <template v-if="selectedFile">
-            <v-btn @click="deleteFile">Удалить файл</v-btn>
-          </template>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-
-        </v-col>
-      </v-row> <v-row>
-        <v-col>
-
-        </v-col>
-      </v-row>
-
-
-      <template v-if="is_admin">
-        <v-row>
-          <v-col>
-            <v-btn @click="confirm_dialog = true">Закончить редактирование</v-btn>
-          </v-col>
-          <v-col align="center">
-            <v-btn @click="deleteProject">Удалить проект</v-btn>
-          </v-col>
-          <v-col>
-
-          </v-col>
-        </v-row>
-      </template>
-    </v-card>
 <!--    </template>-->
 
 

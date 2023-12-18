@@ -1,33 +1,37 @@
 <template>
-  <v-container>
-    <v-card>
+  <v-container >
+    <v-card :loading="loading">
       <v-card-title>Форма поиска</v-card-title>
       <v-text-field
         v-model="search_text"
         append-icon="mdi-magnify"
-        label="Поиск"
+        label="Введите слово"
         single-line
         hide-details
       ></v-text-field>
-      <v-data-table
-        :items="items_projects"
-        :headers="headers_for_project"
-        :search="search_text"
-        @click:row="getTabsByProject"
-        no-data-text="Данные отсувствуют"
-        no-results-text="По запросу ничего не найдено"
-      >
-      </v-data-table>
-      <v-dialog v-model="modal" max-width="700">
-        <ProjectComponent v-bind:project="current_project"></ProjectComponent>
-      </v-dialog>
+      <p></p>
+      <p></p>
+      <v-btn @click="getSearch">
+        Поиск
+      </v-btn>
+      <template v-if="items_projects !== null">
+        <v-data-table
+          :items="items_projects"
+          :headers="headers_for_project"
+          no-data-text="Данные отсувствуют"
+          no-results-text="По запросу ничего не найдено"
+        >
+        </v-data-table>
+      </template>
+
+
       <v-card-actions>
 <!--        <v-btn>-->
 <!--         Загрузить в WORD-->
 <!--        </v-btn>-->
-        <v-btn @click="getPDF">
-          Загрузить в PDF
-        </v-btn>
+<!--        <v-btn @click="getPDF">-->
+<!--          Загрузить в PDF-->
+<!--        </v-btn>-->
       </v-card-actions>
     </v-card>
 
@@ -43,21 +47,16 @@ import ProjectComponent from "~/components/project-component.vue";
 export default {
   components: {ProjectComponent},
   beforeMount() {
-    this.getProjects();
+    // this.getProjects();
   },
   data(){
     return{
       modal: false,
+      loading: false,
       headers_for_project: [
-        { text: 'Id', value: 'id' },
-
-        { text: 'Название проекта',
+        { text: 'Название листа',
           sortable: false,
           value: 'name',
-        },
-        { text: 'Компания',
-          sortable: false,
-          value: 'company.name',
         }
         // {
         //   text: "",
@@ -72,6 +71,16 @@ export default {
     }
   },
   methods:{
+    getSearch(){
+      this.loading = true;
+      var fm = new FormData;
+      fm.append('search', this.search_text);
+      this.$axios.post('/get-search', fm)
+        .then((response) =>{
+          this.items_projects = response.data.data;
+          this.loading = false
+        })
+    },
     getProjects(){
       this.$axios.get('/projects')
         .then((response) =>{
@@ -100,10 +109,6 @@ export default {
           // link.click();
         })
     },
-    getTabsByProject(item) {
-      this.modal = true;
-      this.current_project = item;
-    }
   }
 }
 </script>
