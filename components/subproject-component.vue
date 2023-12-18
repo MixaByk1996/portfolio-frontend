@@ -1,97 +1,98 @@
 <template>
   <v-container style="margin: 5px 5px 5px 5px">
-    <template v-if="modal_update === false">
-      <v-card>
-        <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
-        Описание : <br>
-        <div v-html="current_subproject.description"></div>
+<!--    <template v-if="modal_update === false">-->
+<!--      <v-card>-->
+<!--        <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>-->
+<!--        Описание : <br>-->
+<!--        <div v-html="current_subproject.description"></div>-->
 
-        <template v-if="current_subproject.tags !== null">
-          <v-list>
-            <v-subheader>Теги</v-subheader>
-            <v-list-item-group v-model="selectedTag">
-              <v-list-item
-                v-for="item in current_subproject.tags"
-                :key="item.id"
-                :value="item.id"
-              >
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </template>
-        <template v-else>
-          <br> Теги отсувствуют
-        </template>
+<!--        <template v-if="current_subproject.tags !== null">-->
+<!--          <v-list>-->
+<!--            <v-subheader>Теги</v-subheader>-->
+<!--            <v-list-item-group v-model="selectedTag">-->
+<!--              <v-list-item-->
+<!--                v-for="item in current_subproject.tags"-->
+<!--                :key="item.id"-->
+<!--                :value="item.id"-->
+<!--              >-->
+<!--                <v-list-item-title v-text="item.name"></v-list-item-title>-->
+<!--              </v-list-item>-->
+<!--            </v-list-item-group>-->
+<!--          </v-list>-->
+<!--        </template>-->
+<!--        <template v-else>-->
+<!--          <br> Теги отсувствуют-->
+<!--        </template>-->
 
-        <v-row>
-          <v-col>
-            <template v-if="current_subproject.files !== null">
-              <v-list >
-                <v-subheader>Файлы</v-subheader>
-                <v-list-item-group v-model="selectedFile">
-                  <v-list-item
-                    v-for="item in current_subproject.files"
-                    :key="item.id"
-                    :value="item.name"
-                  >
-                    <v-list-item-title v-text="item.name"></v-list-item-title>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </template>
-            <template v-else>
-              <br> Файлы отсувствуют
-            </template>
-          </v-col>
-          <v-col>
-            <template v-if="images_file !== null">
-              <v-card max-width="700">
-                <v-carousel>
-                  <v-carousel-item v-for="item in images_file"
-                                   :key="item.id"
-                                   :src="baseURL + item.file_url"
-                                   cover
-                  >
+<!--        <v-row>-->
+<!--          <v-col>-->
+<!--            <template v-if="current_subproject.files !== null">-->
+<!--              <v-list >-->
+<!--                <v-subheader>Файлы</v-subheader>-->
+<!--                <v-list-item-group v-model="selectedFile">-->
+<!--                  <v-list-item-->
+<!--                    v-for="item in current_subproject.files"-->
+<!--                    :key="item.id"-->
+<!--                    :value="item.name"-->
+<!--                  >-->
+<!--                    <v-list-item-title v-text="item.name"></v-list-item-title>-->
+<!--                  </v-list-item>-->
+<!--                </v-list-item-group>-->
+<!--              </v-list>-->
+<!--            </template>-->
+<!--            <template v-else>-->
+<!--              <br> Файлы отсувствуют-->
+<!--            </template>-->
+<!--          </v-col>-->
+<!--          <v-col>-->
+<!--            <template v-if="images_file !== null">-->
+<!--              <v-card max-width="700">-->
+<!--                <v-carousel>-->
+<!--                  <v-carousel-item v-for="item in images_file"-->
+<!--                                   :key="item.id"-->
+<!--                                   :src="baseURL + item.file_url"-->
+<!--                                   cover-->
+<!--                  >-->
 
-                  </v-carousel-item>
-                </v-carousel>
-              </v-card>
+<!--                  </v-carousel-item>-->
+<!--                </v-carousel>-->
+<!--              </v-card>-->
 
-            </template>
-          </v-col>
-        </v-row>
+<!--            </template>-->
+<!--          </v-col>-->
+<!--        </v-row>-->
 
-        <br>
-        <template v-if="is_admin">
-          <v-row>
-            <v-col>
-              <v-btn @click="modal_update = true">Редактировать</v-btn>
-              <v-btn @click="deleteSubProject">Удалить</v-btn>
-            </v-col>
+<!--        <br>-->
+<!--        <template v-if="is_admin">-->
+<!--          <v-row>-->
+<!--            <v-col>-->
+<!--              <v-btn @click="modal_update = true">Редактировать</v-btn>-->
+<!--              <v-btn @click="deleteSubProject">Удалить</v-btn>-->
+<!--            </v-col>-->
 
-          </v-row>
+<!--          </v-row>-->
 
-        </template>
-
-
-      </v-card>
-    </template>
+<!--        </template>-->
 
 
+<!--      </v-card>-->
+<!--    </template>-->
 
-    <template v-else>
+
+
+<!--    <template v-else>-->
         <v-card>
           <v-text-field v-model="form.name"
                         label="Наименование"
           >
           </v-text-field>
-          <p>Описание подпроекта</p>
-          <tiptap-vuetify
-            v-model="form.description"
-            :extensions="extensions"
-          ></tiptap-vuetify>
-          <v-btn @click="updateProject">Обновить информацию</v-btn>
+          <p>Описание листа</p>
+          <vue-editor v-model="form.description"></vue-editor>
+<!--          <tiptap-vuetify-->
+<!--            v-model="form.description"-->
+<!--            :extensions="extensions"-->
+<!--          ></tiptap-vuetify>-->
+<!--          <v-btn @click="updateProject">Обновить информацию</v-btn>-->
 
           <template v-if="current_subproject.tags !== null">
             <v-list>
@@ -107,7 +108,7 @@
               </v-list-item-group>
             </v-list>
             <template v-if="selectedTag">
-              <v-btn @click="deleteTag"></v-btn>
+              <v-btn @click="deleteTag">Удалить тег</v-btn>
             </template>
           </template>
 
@@ -146,23 +147,73 @@
               </template>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col>
 
+            </v-col>
+          </v-row> <v-row>
+          <v-col>
+
+          </v-col>
+        </v-row>
 
           <template v-if="is_admin">
-            <v-btn @click="modal_update = false">Закончить редактирование</v-btn>
+            <v-row>
+              <v-col>
+                <v-btn @click="confirm_dialog = true">Закончить редактирование</v-btn>
+              </v-col>
+              <v-col align="center">
+                <v-btn @click="deleteSubProject">Удалить лист</v-btn>
+              </v-col>
+              <v-col>
+
+              </v-col>
+            </v-row>
           </template>
       </v-card>
-    </template>
+<!--    </template>-->
+
+
+    <v-dialog
+      v-model="confirm_dialog"
+      persistent
+      width="auto"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Внимание!!!
+        </v-card-title>
+        <v-card-text>Сохранить ли все изменения</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click=" confirm_dialog= false; modal_update = false"
+          >
+            ОТМЕНА
+          </v-btn>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="updateProject(); confirm_dialog = false;modal_update = false"
+          >
+            ОК
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
 
   </v-container>
 </template>
 <script>
 import {axios} from 'axios';
+import { VueEditor } from "vue2-editor";
 import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify';
 export default {
   props: ['id'],
-  components: { TiptapVuetify },
+  components: { TiptapVuetify ,VueEditor },
   beforeMount() {
     this.getCurrent()
     this.getUser()
@@ -200,6 +251,7 @@ export default {
       baseURL: 'https://8657437b.com',
       id_file: 0,
       id_tag: 0,
+      confirm_dialog: false,
       modal_update: false,
       selectedTag: null,
       images_file: null,
@@ -279,7 +331,7 @@ export default {
     deleteSubProject(){
       this.$axios.delete('/subprojects/' + this.id)
         .then((response) => {
-          alert('Подпроект удален');
+          alert('Лист удален');
           location.reload();
         })
     }

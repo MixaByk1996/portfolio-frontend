@@ -38,7 +38,6 @@
             <v-list-group v-for="item in projects" :key="item.id" :value="item.name">
                   <template v-slot:activator>
                     <v-list-item @click="clickProject(item)">
-
                       <v-icon>
                         mdi-folder-open
                       </v-icon>
@@ -48,22 +47,44 @@
                     </v-list-item>
                   </template>
 
+              <v-list-item style="background-color: beige"  v-for="project in item.subproject" :value="project.id" :key="project.id" @click="clickSubProject(project.id)">
+                <v-icon>
+                  mdi-playlist-edit
+                </v-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="project.name"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item style="background-color: beige"  v-for="file in item.files" :value="file.id" :key="file.id" @click="downloadFile(file.file_url, file.name)">
+                <v-icon>
+                  mdi-file-send
+                </v-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="file.name"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item style="background-color: beige"  v-for="tag in item.tags" :value="tag.id" :key="tag.id">
+                <v-icon>
+                  mdi-tag
+                </v-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="tag.name"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
 
 
-              <v-list-group v-for="project in item.subproject" :key="project.id" :value="project.name" class="pl-10">
-                <template v-slot:activator >
-                  <v-list-item @click="clickSubProject(project.id)">
-                    <v-icon>
-                      mdi-folder-open
-                    </v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title v-text="project.name"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
 
-                </template>
 
-              </v-list-group>
+
+<!--              <v-list-group v-for="project in item.subproject" :key="project.id" :value="project.name" class="pl-10">-->
+<!--                <template v-slot:activator >-->
+<!--              mdi-file-send    -->
+
+<!--                </template>-->
+
+<!--              </v-list-group>-->
             </v-list-group>
           <v-divider></v-divider>
           <v-list-item link @click="logout">
@@ -105,7 +126,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import {nextTick, ref} from 'vue'
 import MenuAdmin from "~/components/menu-admin.vue";
 import SearchComponent from "~/components/search-component.vue";
 import ProjectComponent from "~/components/project-component.vue";
@@ -139,6 +160,7 @@ export default {
       is_temp_subproject: false,
       is_temp_project: false,
       temp_subproject: null,
+      baseURL: 'https://8657437b.com',
       itemsMain: [
         { title: 'Click Me222' },
         { title: 'Click Me2222' },
@@ -148,18 +170,32 @@ export default {
     }
   },
   methods:{
-    clickProject(item){
+    downloadFile(url, name){
+      console.log(url);
+      var fullurl = this.baseURL + url;
+      const link = document.createElement('a')
+      link.href = fullurl
+      link.target = '_blank'
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
+    },
+    async clickProject(item){
       this.temp_project = item;
-      console.log(item);
+      this.is_temp_project = false;
+      await this.$nextTick();
       this.is_temp_project = true;
       this.is_temp_subproject = false;
       this.isMenuAdmin = false;
       this.isMenuSearch = false;
+
     },
-    clickSubProject(id){
+    async clickSubProject(id){
       this.temp_subproject = id;
-      this.is_temp_subproject = true;
       this.is_temp_project = false;
+      this.is_temp_subproject = false;
+      await this.$nextTick();
+      this.is_temp_subproject = true;
       this.isMenuAdmin = false;
       this.isMenuSearch = false;
     },

@@ -1,119 +1,122 @@
 <template>
   <v-container style="margin: 5px 5px 5px 5px">
-  <template v-if="modal_update == false">
-    <v-card >
-      Проект: {{project.name}} <br>
-      Описание : <br>
-      <div v-html="project.description"></div>
-<!--      <tiptap-vuetify-->
-<!--        v-model="project.description"-->
-<!--        :extensions="extensions"-->
-<!--        disabled="disabled"-->
-<!--      ></tiptap-vuetify>-->
-      <br>
-      Компания: {{project.company.name}}
-      <template v-if="this.project.tags.length > 0">
-        <v-list>
-          <v-subheader>Теги</v-subheader>
-          <v-list-item-group v-model="selectedTag">
-            <v-list-item
-              v-for="item in project.tags"
-              :key="item.id"
-              :value="item.id"
-            >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </template>
-      <template v-else>
-        <br> Теги отсувствуют
-      </template>
-      <v-row>
-        <v-col>
-          <template v-if="this.project.files.length > 0">
-            <v-list >
-              <v-subheader>Файлы</v-subheader>
-              <v-list-item-group v-model="selectedFile">
-                <v-list-item
-                  v-for="item in project.files"
-                  :key="item.id"
-                  :value="item.id"
-                  @click.prevent="downloadFile(item.file_url, item.name)"
-                >
-                  <v-list-item-title v-text="item.name"></v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </template>
-          <template v-else>
-            <br> Файлы отсувствуют
-          </template>
-        </v-col>
-        <v-col>
-          <template v-if="images_file.length > 0">
-            <v-card max-width="700">
-              <v-carousel>
-                <v-carousel-item v-for="item in images_file"
-                                 :key="item.id"
-                                 :src="baseURL + item.file_url"
-                                 cover
-                >
+<!--  <template v-if="modal_update == false">-->
+<!--    <v-card >-->
+<!--      Проект: {{project.name}} <br>-->
+<!--      Описание : <br>-->
+<!--      <div v-html="project.description"></div>-->
+<!--&lt;!&ndash;      <tiptap-vuetify&ndash;&gt;-->
+<!--&lt;!&ndash;        v-model="project.description"&ndash;&gt;-->
+<!--&lt;!&ndash;        :extensions="extensions"&ndash;&gt;-->
+<!--&lt;!&ndash;        disabled="disabled"&ndash;&gt;-->
+<!--&lt;!&ndash;      ></tiptap-vuetify>&ndash;&gt;-->
+<!--      <br>-->
+<!--      Компания: {{project.company.name}}-->
+<!--      <template v-if="this.project.tags.length > 0">-->
+<!--        <v-list>-->
+<!--          <v-subheader>Теги</v-subheader>-->
+<!--          <v-list-item-group v-model="selectedTag">-->
+<!--            <v-list-item-->
+<!--              v-for="item in project.tags"-->
+<!--              :key="item.id"-->
+<!--              :value="item.id"-->
+<!--            >-->
+<!--              <v-list-item-title v-text="item.name"></v-list-item-title>-->
+<!--            </v-list-item>-->
+<!--          </v-list-item-group>-->
+<!--        </v-list>-->
+<!--      </template>-->
+<!--      <template v-else>-->
+<!--        <br> Теги отсувствуют-->
+<!--      </template>-->
+<!--      <v-row>-->
+<!--        <v-col>-->
+<!--          <template v-if="this.project.files.length > 0">-->
+<!--            <v-list >-->
+<!--              <v-subheader>Файлы</v-subheader>-->
+<!--              <v-list-item-group v-model="selectedFile">-->
+<!--                <v-list-item-->
+<!--                  v-for="item in project.files"-->
+<!--                  :key="item.id"-->
+<!--                  :value="item.id"-->
+<!--                  @click.prevent="downloadFile(item.file_url, item.name)"-->
+<!--                >-->
+<!--                  <v-list-item-title v-text="item.name"></v-list-item-title>-->
+<!--                </v-list-item>-->
+<!--              </v-list-item-group>-->
+<!--            </v-list>-->
+<!--          </template>-->
+<!--          <template v-else>-->
+<!--            <br> Файлы отсувствуют-->
+<!--          </template>-->
+<!--        </v-col>-->
+<!--        <v-col>-->
+<!--          <template v-if="images_file.length > 0">-->
+<!--            <v-card max-width="700">-->
+<!--              <v-carousel>-->
+<!--                <v-carousel-item v-for="item in images_file"-->
+<!--                                 :key="item.id"-->
+<!--                                 :src="baseURL + item.file_url"-->
+<!--                                 cover-->
+<!--                >-->
 
-                </v-carousel-item>
-              </v-carousel>
-            </v-card>
+<!--                </v-carousel-item>-->
+<!--              </v-carousel>-->
+<!--            </v-card>-->
 
-          </template>
-        </v-col>
-      </v-row>
-
-
-      <template v-if="this.project.subproject.length > 0">
-        <v-list >
-          <v-subheader>Список подпроектов</v-subheader>
-          <v-list-item-group v-model="selectedSubproject">
-            <v-list-item
-              v-for="item in project.subproject"
-              :key="item.id"
-              :value="item.name"
-            >
-              <v-list-item-title v-text="item.name">
-              </v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </template>
-      <template v-else>
-        <br> Подпроекты отсувствуют
-      </template>
-      <br>
-      <template v-if="is_admin">
-        <v-row>
-          <v-col>
-            <v-btn @click="modal_update = true">Редактировать</v-btn>
-            <v-btn @click="deleteProject">Удалить проект</v-btn>
-          </v-col>
-
-        </v-row>
-      </template>
-    </v-card>
-  </template>
+<!--          </template>-->
+<!--        </v-col>-->
+<!--      </v-row>-->
 
 
+<!--      <template v-if="this.project.subproject.length > 0">-->
+<!--        <v-list >-->
+<!--          <v-subheader>Список подпроектов</v-subheader>-->
+<!--          <v-list-item-group v-model="selectedSubproject">-->
+<!--            <v-list-item-->
+<!--              v-for="item in project.subproject"-->
+<!--              :key="item.id"-->
+<!--              :value="item.name"-->
+<!--            >-->
+<!--              <v-list-item-title v-text="item.name">-->
+<!--              </v-list-item-title>-->
+<!--            </v-list-item>-->
+<!--          </v-list-item-group>-->
+<!--        </v-list>-->
+<!--      </template>-->
+<!--      <template v-else>-->
+<!--        <br> Подпроекты отсувствуют-->
+<!--      </template>-->
+<!--      <br>-->
+<!--      <template v-if="is_admin">-->
+<!--        <v-row>-->
+<!--          <v-col>-->
+<!--            <v-btn @click="modal_update = true">Редактировать</v-btn>-->
+<!--            <v-btn @click="deleteProject">Удалить проект</v-btn>-->
+<!--          </v-col>-->
 
-    <template v-else>
+<!--        </v-row>-->
+<!--      </template>-->
+<!--    </v-card>-->
+<!--  </template>-->
+
+
+
+<!--    <template v-else>-->
     <v-card>
       <v-text-field v-model="form.name"
         label="Наименование"
       >
       </v-text-field>
       <p>Описание проекта</p>
-      <tiptap-vuetify
-        v-model="form.description"
-        :extensions="extensions"
-      ></tiptap-vuetify>
-      <v-btn @click="updateProject">Обновить информацию</v-btn><br>
+        <vue-editor v-model="form.description"></vue-editor>
+
+<!--      <VueEditor v-model="form.description"></VueEditor>-->
+<!--      <tiptap-vuetify-->
+<!--        v-model="form.description"-->
+<!--        :extensions="extensions"-->
+<!--      ></tiptap-vuetify>-->
+<!--      <v-btn @click="updateProject">Обновить информацию</v-btn><br>-->
 
       <template v-if="this.project.tags.length > 0">
         <v-list>
@@ -169,25 +172,74 @@
           </template>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+
+        </v-col>
+      </v-row> <v-row>
+        <v-col>
+
+        </v-col>
+      </v-row>
+
 
       <template v-if="is_admin">
         <v-row>
           <v-col>
-            <v-btn @click="modal_update = false">Закончить редактирование</v-btn>
+            <v-btn @click="confirm_dialog = true">Закончить редактирование</v-btn>
+          </v-col>
+          <v-col align="center">
+            <v-btn @click="deleteProject">Удалить проект</v-btn>
+          </v-col>
+          <v-col>
+
           </v-col>
         </v-row>
       </template>
     </v-card>
-    </template>
+<!--    </template>-->
+
+
+    <v-dialog
+      v-model="confirm_dialog"
+      persistent
+      width="auto"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Внимание!!!
+        </v-card-title>
+        <v-card-text>Сохранить ли все изменения</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click=" confirm_dialog= false; modal_update = false"
+          >
+            ОТМЕНА
+          </v-btn>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="updateProject(); confirm_dialog = false;modal_update = false"
+          >
+            ОК
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
 
   </v-container>
 </template>
 <script>
 import {axios} from 'axios';
-import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
+import { VueEditor } from "vue2-editor";
+import { TiptapVuetify, Heading, CodeBlock,Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
 export default {
   props: ['project'],
-  components: { TiptapVuetify },
+  components: { TiptapVuetify ,VueEditor},
   beforeMount() {
     console.log(this.project.files)
     this.form.name = this.project.name
@@ -217,8 +269,11 @@ export default {
         Code,
         HorizontalRule,
         Paragraph,
-        HardBreak
+        HardBreak,
+        CodeBlock
+
       ],
+      content: '',
       form:{
         name: "",
         description: ""
@@ -229,6 +284,7 @@ export default {
       project_files: null,
       images_file: null,
       is_admin: false,
+      confirm_dialog: false,
       selectedTag: null,
       modal_update: false,
       selectedFile: null,

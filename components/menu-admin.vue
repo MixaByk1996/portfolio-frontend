@@ -221,18 +221,11 @@
       <v-form ref="formSubjectCreate" @submit.prevent="createSubproject">
         <v-card>
           <v-card-title>
-            Добавление подпроекта
+            Добавление листа
           </v-card-title>
           <v-text-field
             v-model="form_create_sub_project.name"
             label="Наименование"
-            single-line
-            :rules="rules"
-            hide-details
-          ></v-text-field>
-          <v-text-field
-            v-model="form_create_sub_project.description"
-            label="Описание"
             single-line
             :rules="rules"
             hide-details
@@ -248,6 +241,17 @@
             return-object
             single-line
           ></v-select>
+
+          <p>Описание листа</p>
+          <vue-editor v-model="form_create_sub_project.description"></vue-editor>
+<!--          <v-text-field-->
+<!--            v-model="form_create_sub_project.description"-->
+<!--            label="Описание"-->
+<!--            single-line-->
+<!--            :rules="rules"-->
+<!--            hide-details-->
+<!--          ></v-text-field>-->
+
           <v-card-actions>
             <v-btn type="submit">Добавить</v-btn>
           </v-card-actions>
@@ -279,7 +283,6 @@
             v-model="form_create_project.select_company"
             item-text="name"
             item-value='id'
-            :rules="rules"
             :items="this.list_companies_for_select"
             label="Выберите компанию"
             persistent-hint
@@ -327,7 +330,7 @@
           </v-card-title>
           <v-switch
             v-model="model_switch_in_tags"
-            :label="model_switch_in_tags ? 'Подпроекты' : 'Проекты'"
+            :label="model_switch_in_tags ? 'Листы' : 'Проекты'"
             @change="getSwitchInTagsChanged"
           >
           </v-switch>
@@ -337,7 +340,7 @@
             item-value='id'
             :rules="rules"
             :items="this.list_general"
-            :label="model_switch_in_tags ? 'Выберите подпроект' : 'Выберите проект'"
+            :label="model_switch_in_tags ? 'Выберите лист' : 'Выберите проект'"
             persistent-hint
             return-object
             single-line
@@ -345,7 +348,7 @@
           <v-text-field
             v-model="name_tag"
             :rules="rules"
-            label="Введите название тега/ильтра"
+            label="Введите название тега/фильтра"
             single-line
             hide-details
           ></v-text-field>
@@ -402,7 +405,9 @@
 </template>
 <script>
 import {axios} from 'axios';
+import { VueEditor } from "vue2-editor";
 export default {
+  components:{VueEditor},
   beforeMount() {
     this.getIPs();
     this.getUsers();
@@ -637,9 +642,13 @@ export default {
     createProject(){
       if (this.$refs.formCreateProject.validate()){
         let fm = new FormData();
+        let company_id = 0;
         fm.append('name', this.form_create_project.name );
         fm.append('description', this.form_create_project.description );
-        fm.append('company_id', this.form_create_project.select_company.id );
+        if(this.form_create_project.select_company != null){
+          company_id = this.form_create_project.select_company.id
+        }
+        fm.append('company_id', company_id );
         this.$axios.post('/projects', fm)
           .then((response) =>{
             alert(response.data.message);
