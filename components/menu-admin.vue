@@ -389,7 +389,7 @@
         <v-btn width="240"  height="100" @click="modalCompanyCreate = !modalCompanyCreate">Добавить компанию</v-btn>
       </v-col>
       <v-col>
-          <v-btn width="240"  height="100" @click="modalCreateSubproject = !modalCreateSubproject">Добавить подпроект</v-btn>
+          <v-btn width="240"  height="100" @click="modalCreateSubproject = !modalCreateSubproject">Добавить лист</v-btn>
 
       </v-col>
     </v-row>
