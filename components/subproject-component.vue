@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
-        <vue-editor disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
+        <vue-editor :disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
 
         <template v-if="current_subproject.tags !== null">
           <v-list>
@@ -247,6 +247,7 @@ export default {
         HardBreak
       ],
       is_admin: false,
+      disabled: false,
       current_subproject: null,
       form:{
         name: "",
