@@ -4,7 +4,9 @@
       <v-card>
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
-        <div v-html="current_subproject.description"></div>
+        <div>
+          {{current_subproject.description}}
+        </div>
 
         <template v-if="current_subproject.tags !== null">
           <v-list>
