@@ -1,86 +1,86 @@
 <template>
   <v-container style="margin: 5px 5px 5px 5px">
-<!--    <template v-if="modal_update === false">-->
-<!--      <v-card>-->
-<!--        <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>-->
-<!--        Описание : <br>-->
-<!--        <div v-html="current_subproject.description"></div>-->
+    <template v-if="modal_update === false">
+      <v-card>
+        <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
+        Описание : <br>
+        <div v-html="current_subproject.description"></div>
 
-<!--        <template v-if="current_subproject.tags !== null">-->
-<!--          <v-list>-->
-<!--            <v-subheader>Теги</v-subheader>-->
-<!--            <v-list-item-group v-model="selectedTag">-->
-<!--              <v-list-item-->
-<!--                v-for="item in current_subproject.tags"-->
-<!--                :key="item.id"-->
-<!--                :value="item.id"-->
-<!--              >-->
-<!--                <v-list-item-title v-text="item.name"></v-list-item-title>-->
-<!--              </v-list-item>-->
-<!--            </v-list-item-group>-->
-<!--          </v-list>-->
-<!--        </template>-->
-<!--        <template v-else>-->
-<!--          <br> Теги отсувствуют-->
-<!--        </template>-->
+        <template v-if="current_subproject.tags !== null">
+          <v-list>
+            <v-subheader>Теги</v-subheader>
+            <v-list-item-group v-model="selectedTag">
+              <v-list-item
+                v-for="item in current_subproject.tags"
+                :key="item.id"
+                :value="item.id"
+              >
+                <v-list-item-title v-text="item.name"></v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </template>
+        <template v-else>
+          <br> Теги отсувствуют
+        </template>
 
-<!--        <v-row>-->
-<!--          <v-col>-->
-<!--            <template v-if="current_subproject.files !== null">-->
-<!--              <v-list >-->
-<!--                <v-subheader>Файлы</v-subheader>-->
-<!--                <v-list-item-group v-model="selectedFile">-->
-<!--                  <v-list-item-->
-<!--                    v-for="item in current_subproject.files"-->
-<!--                    :key="item.id"-->
-<!--                    :value="item.name"-->
-<!--                  >-->
-<!--                    <v-list-item-title v-text="item.name"></v-list-item-title>-->
-<!--                  </v-list-item>-->
-<!--                </v-list-item-group>-->
-<!--              </v-list>-->
-<!--            </template>-->
-<!--            <template v-else>-->
-<!--              <br> Файлы отсувствуют-->
-<!--            </template>-->
-<!--          </v-col>-->
-<!--          <v-col>-->
-<!--            <template v-if="images_file !== null">-->
-<!--              <v-card max-width="700">-->
-<!--                <v-carousel>-->
-<!--                  <v-carousel-item v-for="item in images_file"-->
-<!--                                   :key="item.id"-->
-<!--                                   :src="baseURL + item.file_url"-->
-<!--                                   cover-->
-<!--                  >-->
+        <v-row>
+          <v-col>
+            <template v-if="current_subproject.files !== null">
+              <v-list >
+                <v-subheader>Файлы</v-subheader>
+                <v-list-item-group v-model="selectedFile">
+                  <v-list-item
+                    v-for="item in current_subproject.files"
+                    :key="item.id"
+                    :value="item.name"
+                  >
+                    <v-list-item-title v-text="item.name"></v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </template>
+            <template v-else>
+              <br> Файлы отсувствуют
+            </template>
+          </v-col>
+          <v-col>
+            <template v-if="images_file !== null">
+              <v-card max-width="700">
+                <v-carousel>
+                  <v-carousel-item v-for="item in images_file"
+                                   :key="item.id"
+                                   :src="baseURL + item.file_url"
+                                   cover
+                  >
 
-<!--                  </v-carousel-item>-->
-<!--                </v-carousel>-->
-<!--              </v-card>-->
+                  </v-carousel-item>
+                </v-carousel>
+              </v-card>
 
-<!--            </template>-->
-<!--          </v-col>-->
-<!--        </v-row>-->
+            </template>
+          </v-col>
+        </v-row>
 
-<!--        <br>-->
-<!--        <template v-if="is_admin">-->
-<!--          <v-row>-->
-<!--            <v-col>-->
-<!--              <v-btn @click="modal_update = true">Редактировать</v-btn>-->
-<!--              <v-btn @click="deleteSubProject">Удалить</v-btn>-->
-<!--            </v-col>-->
+        <br>
+        <template v-if="is_admin">
+          <v-row>
+            <v-col>
+              <v-btn @click="modal_update = true">Редактировать</v-btn>
+              <v-btn @click="deleteSubProject">Удалить</v-btn>
+            </v-col>
 
-<!--          </v-row>-->
+          </v-row>
 
-<!--        </template>-->
-
-
-<!--      </v-card>-->
-<!--    </template>-->
+        </template>
 
 
+      </v-card>
+    </template>
 
-<!--    <template v-else>-->
+
+
+    <template v-else>
         <v-card>
           <v-text-field v-model="current_subproject.name"
                         label="Наименование"
@@ -171,7 +171,7 @@
             </v-row>
           </template>
       </v-card>
-<!--    </template>-->
+    </template>
 
 
     <v-dialog
@@ -333,9 +333,12 @@ export default {
         })
     },
     updateProject(){
+      this.form.name = this.current_subproject.name;
+      this.form.description = this.current_subproject.description;
       this.$axios.put('/subprojects/' + this.id, this.form)
         .then((response) => {
           alert('Данные обновлены');
+
           location.reload();
         })
     },
