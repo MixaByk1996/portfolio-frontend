@@ -247,7 +247,7 @@ export default {
         HardBreak
       ],
       is_admin: false,
-      disabled: false,
+      disabled: true,
       current_subproject: null,
       form:{
         name: "",
