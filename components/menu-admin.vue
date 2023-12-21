@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-dialog v-model="modalAccessList" max-width="700">
-<v-card >
+  <v-card >
   <v-card >
     <v-card-title>Добавить ip</v-card-title>
     <v-text-field

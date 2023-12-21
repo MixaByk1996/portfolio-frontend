@@ -1,15 +1,27 @@
 <template>
-  <v-app ref="app1" id="inspire">
+  <v-app  ref="app1" id="inspire">
     <v-navigation-drawer v-model="drawer" app>
       <template v-if="projects">
-        <v-list>
+
+        <v-list >
             <v-list-item-content>
                 <v-list-item-title>User: {{this.currentUser.login}}</v-list-item-title>
               <v-list-item-subtitle>{{this.isAdminUser ? 'Администратор' : 'Пользователь'}}</v-list-item-subtitle>
             </v-list-item-content>
           <v-divider></v-divider>
           <template v-if="isAdminUser">
-            <v-list-item link @click="isMenuAdmin = true; isMenuSearch=false; is_temp_subproject = false; is_temp_project = false;">
+            <v-list-item link @click="isMenuAdmin = false; isMenuSearch=false; isMenuTemplates = true; is_temp_subproject = false; is_temp_project = false;">
+              <v-list-item-action>
+                <v-icon >mdi-wrench</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Меню шаблонов
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item link @click="isMenuAdmin = true; isMenuSearch=false; isMenuTemplates = false;is_temp_subproject = false; is_temp_project = false;">
               <v-list-item-action>
                 <v-icon >mdi-wrench</v-icon>
               </v-list-item-action>
@@ -22,7 +34,7 @@
             <v-divider></v-divider>
 
           </template>
-          <v-list-item link @click="isMenuSearch = true; isMenuAdmin = false;is_temp_subproject = false; is_temp_project = false;">
+          <v-list-item link @click="isMenuSearch = true; isMenuAdmin = false;is_temp_subproject = false;isMenuTemplates = false; is_temp_project = false;">
             <v-list-item-action>
               <v-icon>
                 mdi-magnify
@@ -112,6 +124,9 @@
       <template v-if="isMenuAdmin">
         <MenuAdmin></MenuAdmin>
       </template>
+      <template v-if="isMenuTemplates">
+        <MenuTemplates></MenuTemplates>
+      </template>
       <template v-if="isMenuSearch">
         <SearchComponent></SearchComponent>
       </template>
@@ -131,9 +146,10 @@ import MenuAdmin from "~/components/menu-admin.vue";
 import SearchComponent from "~/components/search-component.vue";
 import ProjectComponent from "~/components/project-component.vue";
 import SubprojectComponent from "~/components/subproject-component.vue";
+import MenuTemplates from "~/components/menu-templates.vue";
 const drawer = ref(null)
 export default {
-  components: {SubprojectComponent, ProjectComponent, MenuAdmin,SearchComponent},
+  components: {SubprojectComponent, ProjectComponent, MenuAdmin,SearchComponent, MenuTemplates},
   beforeMount() {
     if (process.client) {
       this.token = localStorage.getItem('token');
@@ -145,6 +161,7 @@ export default {
         this.projects = Array.from(response.data.data);
         console.log(this.projects);
       })
+
   },
   data() {
     return {
@@ -156,10 +173,12 @@ export default {
       isAdminUser: false,
       isMenuAdmin:false,
       isMenuSearch:false,
+      isMenuTemplates: false,
       temp_project: null,
       is_temp_subproject: false,
       is_temp_project: false,
       temp_subproject: null,
+      loading_cic: false,
       opened: false,
       baseURL: 'https://8657437b.com',
       itemsMain: [
@@ -188,6 +207,7 @@ export default {
       this.is_temp_project = true;
       this.is_temp_subproject = false;
       this.isMenuAdmin = false;
+      this.isMenuTemplates = false;
       this.isMenuSearch = false;
 
     },
@@ -195,6 +215,7 @@ export default {
       this.temp_subproject = id;
       this.is_temp_project = false;
       this.is_temp_subproject = false;
+      this.isMenuTemplates = false;
       await this.$nextTick();
       this.is_temp_subproject = true;
       this.isMenuAdmin = false;
@@ -232,3 +253,8 @@ export default {
   },
 }
 </script>
+<style scoped>
+.v-progress-circular {
+  margin: 1rem;
+}
+</style>
