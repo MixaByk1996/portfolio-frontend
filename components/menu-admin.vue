@@ -243,6 +243,39 @@
           ></v-select>
 
           <p>Описание листа</p>
+          <v-select
+            label="Выберите шаблон(необязательно)"
+          :items="templates"
+          item-text="name"
+          item-value="text"
+            @change="getShowItemTemplate"
+          return-object
+          >
+          </v-select>
+          <v-btn @click="show_variable = true">Найти и заменить</v-btn>
+          <template v-if="show_variable === true">
+            <v-dialog v-model="show_variable" max-width="600">
+              <v-form ref="replace_form" ><
+
+                <v-card >
+                  <v-card-title>Замена</v-card-title>
+                  <v-text-field
+                    v-model="search_text_template"
+                    :rules="rules"
+                    label="Слово на замену"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="replace_text_template"
+                    :rules="rules"
+                    label="Новое слово"
+                  >
+                  </v-text-field>
+                </v-card>
+                <v-btn type="submit"></v-btn>
+              </v-form>
+
+            </v-dialog>
+          </template>
           <vue-editor  @keyup="setPosition"  :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
 <!--          <v-text-field-->
 <!--            v-model="form_create_sub_project.description"-->
@@ -418,18 +451,21 @@ export default {
     this.getUsers();
     this.getBackups();
     this.getCompany();
+    this.getTemplates();
     // this.getProjects();
     // this.getSubprojects();
     this.getSwitchInTagsChanged();
   },
   data(){
     return{
+      template_obj: null,
       editorSettings: {
         modules: {
           imageDrop: true,
           imageResize: {},
         }
       },
+      select_template:null,
       is_backup_load : false,
       offsetTop: 0,
       modalAccessList : false,
@@ -437,6 +473,7 @@ export default {
       modalBackupList: false,
       modalCompaniesList:false,
       modalCreateSubproject: false,
+      templates: null,
       ip_text: "",
       search: "",
       searchUser: "",
@@ -465,6 +502,8 @@ export default {
 
       model_switch_in_tags: false,
       model_switch_rules: false,
+      search_text_template: '',
+      replace_text_template: '',
       is_hide_password: false,
       modalCompanyCreate: false,
       select_in_tags: null,
@@ -510,6 +549,7 @@ export default {
           sortable: false,
         },
       ],
+      show_variable: false,
       headersBackup: [
         { text: 'Название файла',
           align: 'start',
@@ -558,6 +598,25 @@ export default {
     }
   },
   methods : {
+    replaceTextInTemplate(){
+      if(this.$refs.replace_form.validate()){
+        this.form_create_sub_project.description.replace(this.search_text_template, this.replace_text_template);
+        this.show_variable = false;
+      }
+    },
+    getShowItemTemplate(item){
+      console.log(item)
+      this.form_create_sub_project.description = item.text
+    },
+    getTemplates(){
+      this.$axios.get('/templates')
+        .then((response) =>{
+          this.templates = response.data.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
     onScroll (e) {
       this.offsetTop = e.target.scrollTop
     },

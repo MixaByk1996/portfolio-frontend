@@ -353,9 +353,6 @@ export default {
   },
   mounted (){
     this.getCurrent();
-  },
-  computed(){
-    this.getCurrent();
   }
 }
 </script>
