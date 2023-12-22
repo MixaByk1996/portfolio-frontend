@@ -44,22 +44,6 @@
               <br> Файлы отсувствуют
             </template>
           </v-col>
-          <v-col>
-            <template v-if="images_file !== null">
-              <v-card max-width="700">
-                <v-carousel>
-                  <v-carousel-item v-for="item in images_file"
-                                   :key="item.id"
-                                   :src="baseURL + item.file_url"
-                                   cover
-                  >
-
-                  </v-carousel-item>
-                </v-carousel>
-              </v-card>
-
-            </template>
-          </v-col>
         </v-row>
 
         <br>
@@ -221,7 +205,6 @@ export default {
   beforeMount() {
     this.getCurrent()
     this.getUser()
-    this.getImagesFiles()
   },
   data() {
     return {

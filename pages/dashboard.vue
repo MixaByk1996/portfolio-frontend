@@ -159,7 +159,6 @@ export default {
     this.$axios.get('/projects')
       .then(response => {
         this.projects = Array.from(response.data.data);
-        console.log(this.projects);
       })
 
   },
@@ -181,12 +180,6 @@ export default {
       loading_cic: false,
       opened: false,
       baseURL: 'https://8657437b.com',
-      itemsMain: [
-        { title: 'Click Me222' },
-        { title: 'Click Me2222' },
-        { title: 'Click Me2' },
-        { title: 'Click Me 2' },
-      ],
     }
   },
   methods:{

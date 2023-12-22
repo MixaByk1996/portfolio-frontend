@@ -1,8 +1,8 @@
 
 <template>
 <v-container>
-  <v-dialog v-model="show">
-    <v-card>
+  <v-dialog max-width="1000" v-model="show">
+    <v-card >
       <v-form >
         <v-text-field
           v-model="form_show.name"
@@ -10,13 +10,13 @@
           label="Наименование">
         </v-text-field>
         <p>Описание листа</p>
-        <vue-editor disabled="disabled" :editor-options="editorSettings" v-model="form_show.text"></vue-editor>
+        <vue-editor  disabled="disabled" :editor-options="editorSettings" v-model="form_show.text"></vue-editor>
       </v-form>
     </v-card>
 
   </v-dialog>
   <template v-if="is_created">
-    <v-card>
+    <v-card max-width="1000">
       <v-btn @click="is_created = false">
         Выйти из добавления
       </v-btn>

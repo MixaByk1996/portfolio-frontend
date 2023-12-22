@@ -217,7 +217,7 @@
 
     </v-dialog>
 
-    <v-dialog v-model="modalCreateSubproject" max-width="700">
+    <v-dialog v-model="modalCreateSubproject" max-width="1000">
       <v-form ref="formSubjectCreate" v-scroll:#scroll-target="onScroll" @submit.prevent="createSubproject">
         <v-card>
           <v-card-title>
