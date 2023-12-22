@@ -255,7 +255,7 @@
           <v-btn @click="show_variable = true">Найти и заменить</v-btn>
           <template v-if="show_variable === true">
             <v-dialog v-model="show_variable" max-width="600">
-              <v-form ref="replace_form" ><
+              <v-form ref="replace_form" @submit="replaceTextInTemplate" >
 
                 <v-card >
                   <v-card-title>Замена</v-card-title>
@@ -271,12 +271,12 @@
                   >
                   </v-text-field>
                 </v-card>
-                <v-btn type="submit"></v-btn>
+                <v-btn type="submit">Заменить</v-btn>
               </v-form>
 
             </v-dialog>
           </template>
-          <vue-editor  @keyup="setPosition"  :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
+          <vue-editor id="editor"  @keyup="setPosition"  :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
 <!--          <v-text-field-->
 <!--            v-model="form_create_sub_project.description"-->
 <!--            label="Описание"-->
@@ -438,9 +438,9 @@
 </template>
 <script>
 import {axios} from 'axios';
-import { VueEditor, Quill } from "vue2-editor";
+import {Quill, VueEditor} from "vue2-editor";
 import ImageResize from 'quill-image-resize-vue';
-import { ImageDrop } from 'quill-image-drop-module';
+import {ImageDrop} from 'quill-image-drop-module';
 
 Quill.register("modules/imageDrop", ImageDrop);
 Quill.register("modules/imageResize", ImageResize);
@@ -600,7 +600,7 @@ export default {
   methods : {
     replaceTextInTemplate(){
       if(this.$refs.replace_form.validate()){
-        this.form_create_sub_project.description.replace(this.search_text_template, this.replace_text_template);
+        this.form_create_sub_project.description = this.form_create_sub_project.description.replace(this.search_text_template, this.replace_text_template)
         this.show_variable = false;
       }
     },
