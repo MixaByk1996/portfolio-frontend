@@ -1,7 +1,7 @@
 <template>
   <v-container style="margin: 5px 5px 5px 5px">
     <template v-if="modal_update === false">
-      <v-card>
+      <v-card max-width="1000">
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
         <vue-editor :disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
@@ -65,7 +65,7 @@
 
 
     <template v-else>
-        <v-card>
+        <v-card max-width="1000">
           <v-text-field v-model="current_subproject.name"
                         label="Наименование"
           >
