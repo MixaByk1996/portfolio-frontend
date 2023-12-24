@@ -276,7 +276,7 @@
 
             </v-dialog>
           </template>
-          <vue-editor id="editor"  @keyup="setPosition"  :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
+          <vue-editor id="editor" :editor-options="editorSettings" v-model="form_create_sub_project.description"></vue-editor>
 <!--          <v-text-field-->
 <!--            v-model="form_create_sub_project.description"-->
 <!--            label="Описание"-->
@@ -875,3 +875,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+#editor {
+  width: 100%;
+  height: 100%;
+}
+</style>

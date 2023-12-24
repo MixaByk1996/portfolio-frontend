@@ -10,7 +10,8 @@
           label="Наименование">
         </v-text-field>
         <p>Описание листа</p>
-        <vue-editor  disabled="disabled" :editor-options="editorSettings" v-model="form_show.text"></vue-editor>
+
+        <vue-editor  disabled="disabled" :editor-options="editorSettings" v-model="form_create.text"></vue-editor>
       </v-form>
     </v-card>
 
@@ -36,7 +37,7 @@
           label="Наименование">
         </v-text-field>
         <p>Описание листа</p>
-        <vue-editor :editor-options="editorSettings" v-model="form_create.text"></vue-editor>
+        <vue-editor id="editor" :editor-options="editorSettings" v-model="form_create.text"></vue-editor>
         <v-btn type="submit">Добавить</v-btn>
       </v-form>
 
@@ -70,8 +71,7 @@ import {axios} from 'axios';
 import {Quill, VueEditor} from "vue2-editor";
 import {ImageDrop} from "quill-image-drop-module";
 import ImageResize from "quill-image-resize-vue";
-Quill.register("modules/imageDrop", ImageDrop);
-Quill.register("modules/imageResize", ImageResize);
+import VueFroala from 'vue-froala-wysiwyg';
 export default {
   components:{
     VueEditor
@@ -81,6 +81,13 @@ export default {
   },
   data(){
     return{
+      config: {
+        events: {
+          'froalaEditor.initialized': function () {
+            console.log('initialized')
+          }
+        }
+      },
       expanded: [],
       templates:null,
       show: false,
@@ -149,5 +156,8 @@ export default {
 }
 </script>
 <style scoped>
-
+#editor {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -27,6 +27,7 @@
     "tiptap-extensions": "^1.35.2",
     "tiptap-vuetify": "^2.24.0",
     "vue": "^2.7.10",
+    "vue-froala-wysiwyg": "^4.1.4",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10",
     "vue2-editor": "^2.10.3",

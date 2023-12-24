@@ -4,7 +4,7 @@
       <v-card max-width="1000">
         <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
         Описание : <br>
-        <vue-editor :disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
+        <vue-editor id="editor1" :disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
 
         <template v-if="current_subproject.tags !== null">
           <v-list>
@@ -71,7 +71,7 @@
           >
           </v-text-field>
           <p>Описание листа</p>
-          <vue-editor :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
+          <vue-editor id="editor2" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
 <!--          <tiptap-vuetify-->
 <!--            v-model="form.description"-->
 <!--            :extensions="extensions"-->
@@ -340,20 +340,13 @@ export default {
 }
 </script>
 <style scoped>
-body, html {
+#editor1 {
   width: 100%;
   height: 100%;
 }
-.div {
-  min-width: 100%;
-  min-height: 100%;
-  position: relative;
-}
-.div img {
-  position: absolute;
-  top: 0;
-  left: 0;
+#editor2 {
   width: 100%;
   height: 100%;
 }
+
 </style>
