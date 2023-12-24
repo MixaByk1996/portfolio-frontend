@@ -2,9 +2,9 @@
   <v-container style="margin: 5px 5px 5px 5px">
     <template v-if="modal_update === false">
       <v-card max-width="1000">
-        <v-card-title>Подпроект: {{current_subproject.name}}</v-card-title>
+        <v-card-title>Подпроект: {{form.name}}</v-card-title>
         Описание : <br>
-        <vue-editor id="editor1" :disabled="disabled" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
+        <vue-editor id="editor1" :disabled="disabled" :editor-options="editorSettings" v-model="form.description"></vue-editor>
 
         <template v-if="current_subproject.tags !== null">
           <v-list>
@@ -66,12 +66,12 @@
 
     <template v-else>
         <v-card max-width="1000">
-          <v-text-field v-model="current_subproject.name"
+          <v-text-field v-model="form.name"
                         label="Наименование"
           >
           </v-text-field>
           <p>Описание листа</p>
-          <vue-editor id="editor2" :editor-options="editorSettings" v-model="current_subproject.description"></vue-editor>
+          <vue-editor id="editor2" :editor-options="editorSettings" v-model="form.description"></vue-editor>
 <!--          <tiptap-vuetify-->
 <!--            v-model="form.description"-->
 <!--            :extensions="extensions"-->
@@ -314,11 +314,12 @@ export default {
         .then((response) => {
           console.log(this.id);
           this.current_subproject = response.data.data;
+          this.form.name = response.data.data.name;
+          this.form.description = response.data.data.description;
         })
     },
     updateProject(){
-      this.form.name = this.current_subproject.name;
-      this.form.description = this.current_subproject.description;
+      console.log(this.id);
       this.$axios.put('/subprojects/' + this.id, this.form)
         .then((response) => {
           alert('Данные обновлены');
