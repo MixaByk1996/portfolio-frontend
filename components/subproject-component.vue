@@ -320,7 +320,7 @@ export default {
     },
     updateProject(){
       console.log(this.id);
-      this.$axios.put('/subprojects/' + this.id, this.form)
+      this.$axios.patch('/subprojects/' + this.id, this.form)
         .then((response) => {
           alert('Данные обновлены');
 
