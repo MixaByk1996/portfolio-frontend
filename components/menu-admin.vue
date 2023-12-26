@@ -550,6 +550,7 @@ export default {
         },
       ],
       show_variable: false,
+      template_id: 0,
       headersBackup: [
         { text: 'Название файла',
           align: 'start',
@@ -606,6 +607,7 @@ export default {
     },
     getShowItemTemplate(item){
       console.log(item)
+      this.template_id = item.id
       this.form_create_sub_project.description = item.text
     },
     getTemplates(){
@@ -668,6 +670,7 @@ export default {
         fm.append('name', this.form_create_sub_project.name );
         fm.append('description', this.form_create_sub_project.description );
         fm.append('project_id', this.form_create_sub_project.select_project.id );
+        fm.append('template_id', this.template_id );
         this.$axios.post('/subprojects', fm)
           .then((response) =>{
             alert(response.data.message);

@@ -3,14 +3,14 @@
 <v-container>
   <v-dialog max-width="1000" v-model="show">
     <v-card >
-      <v-form >
+      <v-form ref="editorTemplate" @submit.prevent="updateTemplate" >
         <v-text-field
           v-model="form_show.name"
-          disabled
           label="Наименование">
         </v-text-field>
         <p>Описание листа</p>
-        <vue-editor id="editor"  disabled="disabled" :editor-options="editorSettings" v-model="form_show.text"></vue-editor>
+        <vue-editor id="editor"  :editor-options="editorSettings" v-model="form_show.text"></vue-editor>
+      <v-btn type="submit">Обновить</v-btn>
       </v-form>
     </v-card>
 
@@ -89,7 +89,9 @@ export default {
         name: '',
         text: ''
       },
+      old: '',
       form_show:{
+        id: 0,
         name: '',
         text: ''
       },
@@ -116,10 +118,34 @@ export default {
     }
   },
   methods:{
+    updateTemplate(){
+      let fm = new FormData()
+      console.log(this.form_show)
+      fm.append('name', this.form_show.name)
+      fm.append('text', this.form_show.text)
+       this.$axios.post('/update-template/' + this.form_show.id, fm)
+         .then((response) =>{
+           let fm2 = new FormData()
+           fm2.append('old', this.old)
+           fm2.append('new', this.form_show.text)
+           console.log(fm2)
+           this.$axios.post('/update-descriptions/' + this.form_show.id, fm2)
+             .then((response) =>{
+               alert(response.data.message)
+               this.is_created = false
+               location.reload()
+             })
+         })
+
+
+
+    },
     showTemplate(value){
       console.log(value)
       this.show = true
       this.form_show.text = value.text
+      this.old = value.text
+      this.form_show.id = value.id
       this.form_show.name = value.name
     },
     deleteTemplate(id){
