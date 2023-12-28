@@ -26,9 +26,9 @@
 
 
       <v-card-actions>
-<!--        <v-btn>-->
-<!--         Загрузить в WORD-->
-<!--        </v-btn>-->
+        <v-btn @click="getExcel">
+         Загрузить в EXCEL
+        </v-btn>
 <!--        <v-btn @click="getPDF">-->
 <!--          Загрузить в PDF-->
 <!--        </v-btn>-->
@@ -44,6 +44,10 @@
 import {axios} from 'axios';
 import { Blob } from 'buffer';
 import ProjectComponent from "~/components/project-component.vue";
+import {
+  json2excel,
+  excel2json
+} from 'js2excel';
 export default {
   components: {ProjectComponent},
   beforeMount() {
@@ -71,6 +75,22 @@ export default {
     }
   },
   methods:{
+    getExcel(){
+      if(this.items_projects != null && this.items_projects.length > 0){
+        try {
+          let data = this.items_projects;
+          json2excel({
+            data,
+            name: 'user-info-data',
+            formateDate: 'yyyy/mm/dd'
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }else {
+        alert('Отсувствуют данные')
+      }
+    },
     getSearch(){
       this.loading = true;
       var fm = new FormData;

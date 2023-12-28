@@ -20,6 +20,7 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "core-js": "^3.25.3",
+    "js2excel": "^1.0.1",
     "nuxt": "^2.15.8",
     "quasar-tiptap": "^1.9.1",
     "quill-image-drop-module": "^1.0.3",

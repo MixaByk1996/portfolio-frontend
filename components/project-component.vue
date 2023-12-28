@@ -103,22 +103,36 @@
       </v-card>
     </template>
     <template v-else>
-      <v-card>
-        <v-card-title>
-          Список листов
-        </v-card-title>
-        <v-list>
-          <v-list-item-group>
-            <v-list-item
-                         v-for="item in project.subproject"
-                         :key="item.id"
-                         :value="item.id"
-            >
-              <v-list-item-title v-text="item.name"></v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
+      <v-row no-gutters>
+        <v-col cols="3">
+
+          <v-card>
+            <v-card-title>
+              Список листов
+            </v-card-title>
+            <v-list>
+              <v-list-item-group>
+                <v-list-item link
+                             v-for="item in project.subproject"
+                             :key="item.id"
+                             :value="item.id"
+                             @click="setSubproject(item.id)"
+                >
+                  <v-list-item-title v-text="item.name"></v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </v-col>
+        <template v-if="is_show_subproject">
+          <v-col cols="8">
+            <v-card >
+              <SubprojectComponent v-bind:id="subproject_id"></SubprojectComponent>
+            </v-card>
+          </v-col>
+        </template>
+      </v-row>
+
     </template>
 
 <!--  <template v-if="modal_update == false">-->
@@ -259,6 +273,8 @@
     </v-dialog>
 
 
+
+
   </v-container>
 </template>
 <script>
@@ -290,6 +306,8 @@ export default {
         }
       },
       quill: null,
+      is_show_subproject: false,
+      subproject_id: 0,
       extensions: [
         History,
         Blockquote,
@@ -333,22 +351,34 @@ export default {
     }
   },
   methods:{
+
+    async setSubproject(id){
+      console.log(id);
+      this.subproject_id = id
+      this.is_show_subproject = false;
+      await this.$nextTick();
+      this.is_show_subproject = true;
+    },
+
     setFocus(e){
       if(e.keyCode === 86 && e.ctrlKey){
         this.$refs.cont.ofefsetTop = this.offsetTop;
       }
 
     },
+
     onScroll (e) {
       console.log(e);
       this.offsetTop = e.target.scrollTop
     },
+
     getImagesFiles(){
       const image_types = 'png , jpeg, jpg';
       this.images_file = this.project.files.filter(obj => {
         return image_types.includes(obj.type)
       })
     },
+
     downloadFile(url, name){
       console.log(url);
       var fullurl = this.baseURL + url;
@@ -359,6 +389,7 @@ export default {
           document.body.appendChild(link)
           link.click()
     },
+
     getUser(){
       this.$axios.get('/user')
         .then((response) =>{
@@ -368,6 +399,7 @@ export default {
           console.log(errors)
         })
     },
+
     deleteFile(){
       console.log(this.selectedFile)
       this.$axios.delete('/files/' + this.id_file)
@@ -376,6 +408,7 @@ export default {
           location.reload()
         })
     },
+
     deleteTag(){
       this.$axios.delete('/tags/' + this.id_tag)
         .then((response) => {
@@ -383,6 +416,7 @@ export default {
           location.reload()
         })
     },
+
     addFilesToProject(){
       let fm = new FormData();
       for (var i = 0; i < this.project_files.length; i++) {
@@ -396,6 +430,7 @@ export default {
         })
 
     },
+
     updateProject(){
       this.$axios.put('/projects/' + this.project.id, this.form)
         .then((response) => {
@@ -403,6 +438,7 @@ export default {
           location.reload();
         })
     },
+
     deleteProject(){
       this.$axios.delete('/projects/' + this.project.id)
         .then((response) => {
@@ -410,6 +446,12 @@ export default {
           location.reload();
         })
     }
+
   }
 }
 </script>
+<style scoped>
+.scroll {
+  overflow-y: scroll
+}
+</style>
