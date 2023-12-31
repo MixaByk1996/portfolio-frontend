@@ -104,30 +104,33 @@
     </template>
     <template v-else>
       <v-row no-gutters>
-        <v-col cols="3">
 
-          <v-card>
-            <v-card-title>
-              Список листов
-            </v-card-title>
-            <v-list>
-              <v-list-item-group>
-                <v-list-item link
-                             v-for="item in project.subproject"
-                             :key="item.id"
-                             :value="item.id"
-                             @click="setSubproject(item.id)"
-                >
-                  <v-list-item-title v-text="item.name"></v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-card>
-        </v-col>
         <template v-if="is_show_subproject">
           <v-col cols="8">
             <v-card >
               <SubprojectComponent v-bind:id="subproject_id"></SubprojectComponent>
+            </v-card>
+          </v-col>
+        </template>
+        <template v-else>
+          <v-col cols="3">
+
+            <v-card>
+              <v-card-title>
+                Список листов
+              </v-card-title>
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item link
+                               v-for="item in project.subproject"
+                               :key="item.id"
+                               :value="item.id"
+                               @click="setSubproject(item.id)"
+                  >
+                    <v-list-item-title v-text="item.name"></v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
             </v-card>
           </v-col>
         </template>
